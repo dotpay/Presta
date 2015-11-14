@@ -93,6 +93,7 @@ class dotpay extends PaymentModule
             $this->registerHook('backOfficeHeader') &&
             $this->registerHook('payment') &&
             $this->registerHook('paymentReturn') &&
+            $this->registerHook('displayPaymentEU') &&
             $this->addNewOrderState('PAYMENT_DOTPAY_NEW_STATUS', array('Awaiting Dotpay payment confirmation', 'Oczekiwanie na płatność Dotpay'),'#4169E1') &&
             $this->addNewOrderState('PAYMENT_DOTPAY_COMPLAINT_STATUS', array('Complaint', 'Rozpatrzona reklamacja'),'darkred');   
     }
@@ -371,6 +372,36 @@ protected function getConfigForm()
         ));
         return $this->display(__FILE__, 'payment_return.tpl');            
     }
+    
+    	public function hookDisplayPaymentEU($params)
+	{
+		if (!$this->active)
+			return;
+
+		if (!$this->checkCurrency($params['cart']))
+			return;
+
+		$payment_options = array(
+			'cta_text' => $this->l('Pay by Dotpay'),
+			'logo' => $this->_path.'dotpay.png',
+			'action' => $this->context->link->getModuleLink($this->name, 'payment', array(), true)
+		);
+
+		return $payment_options;
+	}
+
+	public function checkCurrency($cart)
+	{
+		$currency_order = new Currency($cart->id_currency);
+		$currencies_module = $this->getCurrency($cart->id_currency);
+
+		if (is_array($currencies_module))
+			foreach ($currencies_module as $currency_module)
+				if ($currency_order->id == $currency_module['id_currency'])
+					return true;
+		return false;
+	}
+	
         static public function check_urlc_legacy() 
             {
 		$signature =
