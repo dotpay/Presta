@@ -193,12 +193,7 @@ abstract class DotpayController extends ModuleFrontController
         if ($this->currencyId === null) {
             $this->currencyId = $this->context->cart->id_currency;
         }
-        return $this->api->getFormatAmount(
-            Tools::displayPrice(
-                $this->totalAmount,
-                new Currency($this->currencyId)
-            )
-        );
+        return $this->api->getFormatAmount($this->totalAmount);
     }
     
     /**
@@ -213,12 +208,7 @@ abstract class DotpayController extends ModuleFrontController
         if ($this->currencyId === null) {
             $this->currencyId = $this->context->cart->id_currency;
         }
-        return $this->api->getFormatAmount(
-            Tools::displayPrice(
-                $this->shippingAmount,
-                new Currency($this->currencyId)
-            )
-        );
+        return $this->api->getFormatAmount($this->shippingAmount);
     }
     
     /**
