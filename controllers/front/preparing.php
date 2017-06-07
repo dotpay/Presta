@@ -50,7 +50,24 @@ class dotpaypreparingModuleFrontController extends DotpayController
                     $this->module->checkDotpayVirtualProduct();
                     $product = new Product($productId, true);
                     $product->price = $exAmount;
+                    $product->id = $productId;
+                    $product->name = array((int)Configuration::get('PS_LANG_DEFAULT') => 'Online payment');
+                    $product->link_rewrite = array((int)Configuration::get('PS_LANG_DEFAULT') => 'online-payment');
+                    $product->visibility = 'none';
+                    $product->reference = 'DOTPAYFEE';
+                    $product->is_virtual = 1;
+                    $product->online_only = 1;
+                    $product->redirect_type = '404';
+                    $product->quantity = 99999;
+                    $product->id_tax_rules_group = 0;
+                    $product->active = 1;
+                    $product->available_for_order = 1;
+                    $product->meta_keywords = 'payment';
+                    $product->id_category = 1;
+                    $product->id_category_default = 1;
+                    $product->addToCategories(array(1));
                     $product->save();
+                    StockAvailable::setQuantity($product->id,NULL,$product->quantity);
                     $product->flushPriceCache();
 
                     $this->context->cart->updateQty(1, $product->id);
