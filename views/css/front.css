@@ -30,10 +30,10 @@
 }
 p.payment_module a.dotpay {
     background: #fbfbfb;
-    background-size: 85px 50px; 
+    background-size: 85px 50px;
     padding:  25px 20px !important;
 }
-    
+
 p.payment_module a.dotpay:after {
     display: block;
     content: "\f078";
@@ -70,7 +70,7 @@ p.payment_module a:hover {
 .dotpay-card-brand-logo {
     max-height: 30px;
 }
-	
+
 /* Payment view */
 input[type="text"], input[type="password"], input[type="url"], input[type="tel"], input[type="search"], input[type="number"], input[type="datetime"], input[type="email"] {
     background: #FFF none repeat scroll 0% 0% padding-box;
@@ -205,13 +205,41 @@ select.oneclick-margin {
     min-height: 25px;
 }
 
-input[name="blik_code"] {
-    width: 200px;
-    margin: 5px 0px 30px 0px;
-    border-color: #ff6600;
-    border: #ff6600 2px solid;
-    height: 42px;
+
+input[name=blik_code] {
+  width: 200px;
+  border: #ff6600 2px solid;
+  height: auto;
+  font-size: 26px;
+  color: #1e1e1e;
+  padding: 8px !important;
+  letter-spacing: 0.2rem;
+  display: inline-block;
+  text-align: center;
+  margin-left: 0px !important;
+  margin-right: 0px !important;
+  margin-bottom: 2rem;
 }
+
+input[name=blik_code]:hover {
+  border-color: #309b4e;
+  background-color: #f7f7f9;
+}
+
+input[name=blik_code]:focus {
+  border-color: #309b4e;
+  background-color: #f7f7f9;
+}
+
+input[name=blik_code]::placeholder {
+  color: #333 !important;
+  text-align: center;
+}
+
+input[name=blik_code]:focus::placeholder {
+  color: #6b6b6b !important;
+}
+
 
 .dotpay-channels-list .alert-danger {
     background-color: #fbefd2;
@@ -224,6 +252,13 @@ input[name="blik_code"] {
     border-color: #77d485;
     color: #1A6D27;
 }
+
+.dotpay-channels-list .alert-warning {
+    background-color: #ffdcdc;
+    border-color: #f59090;
+    color: #771717;
+}
+
 
 /* Confirm page */
 #instruction {
