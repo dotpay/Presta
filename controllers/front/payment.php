@@ -34,7 +34,7 @@ class dotpaypaymentModuleFrontController extends DotpayController
     public function initContent()
     {
         $this->display_column_left = false;
-        parent::initContent();
+        
         
         if (Tools::getValue('order_id')) {
             $cart = Cart::getCartByOrderId(Tools::getValue('order_id'));
@@ -45,7 +45,7 @@ class dotpaypaymentModuleFrontController extends DotpayController
             $this->context->cart = $cart;
             $this->context->cart->update();
         }
-        
+        parent::initContent();
         $this->context->smarty->assign($this->getArrayForSmarty(true));
         $this->setTemplate("payment.tpl");
     }
