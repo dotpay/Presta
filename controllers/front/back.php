@@ -75,6 +75,10 @@ class dotpaybackModuleFrontController extends DotpayController
                 case 'HASH_NOT_EQUAL_CHK':
                     $message = $this->module->l('Request has been modified during transmission.');
                     break;
+                case 'URLC_INVALID':
+                    $message = $this->module->l('Error: Account settings in Dotpay require using a secure SSL protocol.');
+                    break;
+                    
                 default:
                     $message = $this->module->l('There was an unidentified error. Please contact to your seller and give him the order number.');
             }

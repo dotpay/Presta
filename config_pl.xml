@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<module>
+	<name>dotpay</name>
+	<displayName><![CDATA[Dotpay]]></displayName>
+	<version><![CDATA[2.4.1rc1]]></version>
+	<description><![CDATA[Szybkie i bezpieczne płatności]]></description>
+	<author><![CDATA[tech@dotpay.pl]]></author>
+	<tab><![CDATA[payments_gateways]]></tab>
+	<confirmUninstall><![CDATA[Czy jesteś pewien że chcesz usnąć moduł płatności Dotpay ?]]></confirmUninstall>
+	<is_configurable>1</is_configurable>
+	<need_instance>1</need_instance>
+	<limited_countries></limited_countries>
+</module>

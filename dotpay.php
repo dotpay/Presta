@@ -76,7 +76,7 @@ class dotpay extends PaymentModule
     {
         $this->name = 'dotpay';
         $this->tab = 'payments_gateways';
-        $this->version = '2.3.1';
+        $this->version = '2.4.1rc1';
         $this->author = 'tech@dotpay.pl';
         $this->ps_versions_compliancy = array('min' => '1.6', 'max' => '1.6.9');
         $this->bootstrap = true;
@@ -145,6 +145,7 @@ class dotpay extends PaymentModule
             !$this->registerHook('displayAdminOrder') ||
             !$this->registerHook('displayAdminOrder') ||
             !$this->addDotpayNewStatus() ||
+            !$this->setDefaultCarrierOptions() ||
             !$this->addDotpayWaitingRefundStatus() ||
             !$this->addDotpayFailedRefundStatus() ||
             !$this->addDotpayTotalRefundStatus() ||
@@ -206,6 +207,7 @@ class dotpay extends PaymentModule
             'minorPhpVersion' => '5.4',
             'badNewIdMessage' => $this->l('Incorrect ID (required 6 digits)'),
             'badOldIdMessage' => $this->l('Incorrect ID (5 digits maximum)'),
+            'carriernotselectedMessage' => $this->l('You must choose a delivery method for all of this values'),
             'badNewPinMessage' => $this->l('Incorrect PIN (minimum 16 and maximum 32 alphanumeric characters)'),
             'badOldPinMessage' => $this->l('Incorrect PIN (0 or 16 alphanumeric characters)'),
             'valueLowerThanZero' => $this->l('The value must be greater than zero.'),
@@ -224,8 +226,13 @@ class dotpay extends PaymentModule
             ),
             'urlWithNewVersion' => $version['url'],
             'obsoletePlugin' => version_compare($version['version'], $this->version, '>'),
-            'canNotCheckPlugin' => $version['version'] === null
+            'canNotCheckPlugin' => $version['version'] === null,
+            'deliverylistmethod' =>$this->getConfigCarr()
+
         ));
+          
+          $this->updateDotpayCarriersAssociation();
+
         $template = $this->context->smarty->fetch($this->local_path.'views/templates/admin/configure.tpl');
         return $template.$this->renderForm();
     }
@@ -468,7 +475,12 @@ class dotpay extends PaymentModule
             'id_language' => $this->context->language->id
         );
 
-        return $helper->generateForm(array($this->getConfigForm()));
+        $carriers_form = $this->getCarriersForm();
+        $general_settings_form = $this->getConfigForm();
+
+      //  return $helper->generateForm(array($this->getConfigForm()));
+
+        return $helper->generateForm(array($general_settings_form, $carriers_form));
     }
 
     /**
@@ -532,6 +544,7 @@ class dotpay extends PaymentModule
                         'type' => 'text',
                         'name' => $this->config->getDotpayIdFN(),
                         'label' => $this->l('ID'),
+                        'prefix' => '<i style="font-weight: bold; color: #10279b; font-size: 1.4em;">&#35;</i>',
                         'size' => 6,
                         'class' => 'fixed-width-sm',
                         'desc' => $this->l('Copy from Dotpay user panel').' <div id="infoID" /></div>',
@@ -541,6 +554,8 @@ class dotpay extends PaymentModule
                         'type' => 'text',
                         'name' => $this->config->getDotpayPINFN(),
                         'label' => $this->l('PIN'),
+                        'prefix' => '<i class="icon-key" style="color: #10279b;"></i>',
+                        'suffix' => '<i class="icon-eye-slash" id="eyelook" style="color: #2eacce; cursor : zoom-in;"></i>',
                         'class' => 'fixed-width-xxl',
                         'desc' => $this->l('Copy from Dotpay user panel').' <div id="infoPIN" /></div>',
                         'required' => true
@@ -584,9 +599,52 @@ class dotpay extends PaymentModule
                             )
                         )
                     ),
+                    /*
                     array(
                         'type' => 'radio',
-                        'label' => '<span class="dev-option advanced-mode-switch">'.$this->l('Advanced Mode').'</span>',
+                        'label' => '<span class="dev-option channel-name-show">'.$this->l('Channel name visibility').'</span>',
+                        'name' => $this->config->getDotpayChannelNameVisiblityFN(),
+                        'is_bool' => false,
+                        'desc' => '<b>'.$this->l('Display payment channels names in widget').'</b><br>'.$this->l('This function is available if "Dotpay widget on shop site is Enable"'),                           
+                        'values' => array(
+                            array(
+                                'id' => 'active_on',
+                                'value' => true,
+                                'label' => $this->l('Show')
+                            ),
+                            array(
+                                'id' => 'active_off',
+                                'value' => false,
+                                'label' => $this->l('Hide')
+                            )
+                        )
+                    ),
+                    */
+                    array(
+                        'type' => 'radio',
+                        'label' => '<span class="">'.$this->l('Use the additional features necessary for postponed payments').'</span>',
+                        'name' => $this->config->getDotpayPostponedPaymentFN(),
+                        'is_bool' => true,
+                        'class' => 'dev-option postponed-enable-option',
+                        'hint' => $this->l('Enable if you want to use channels offering postponed payments.'),
+                        'desc' => '<b>'.$this->l('The function is necessary if you have an active additional payment channel for postponed payments on your Dotpay account.').'</b><br>'.$this->l('Additional payment information such as: delivery address, date of account activation in the store or the number of previous orders can be sent to the payment operator.'),                           
+                        'values' => array(
+                            array(
+                                'id' => 'active_on',
+                                'value' => true,
+                                'label' => $this->l('Enable')
+                            ),
+                            array(
+                                'id' => 'active_off',
+                                'value' => false,
+                                'label' => $this->l('Disable')
+                            )
+                        )
+                    ),
+
+                    array(
+                        'type' => 'radio',
+                        'label' => '<i class="icon-AdminTools" style="color: #10279b;"></i> <span class="dev-option advanced-mode-switch dotpayadvsett">'.$this->l('Advanced Mode').'</span>',
                         'name' => $this->config->getDotpayAdvancedModeFN(),
                         'is_bool' => true,
                         'desc' => $this->l('Show advanced plugin settings'),
@@ -635,6 +693,7 @@ class dotpay extends PaymentModule
                         'type' => 'text',
                         'label' => '<span class="dev-option lastInSection">'.$this->l('Currencies for which main channel is disabled').'</span>',
                         'name' => $this->config->getDotpayWidgetDisCurrFN(),
+                        'prefix' => '<i class="icon-money" style="color: #407786;"></i>',
                         'class' => 'fixed-width-xxl',
                         'desc' => $this->l('Enter currency codes separated by commas, for example: EUR,USD,GBP').'<br><b>'.$this->l('Leave this field blank to display for all currencies').'</b>',
                     ),
@@ -676,6 +735,27 @@ class dotpay extends PaymentModule
                             )
                         )
                     ),
+
+                    array(
+                        'type' => 'switch',
+                        'label' => '<span class="dev-option">'.$this->l('PayPo channel enabled').'</span>',
+                        'name' => $this->config->getDotpayPayPoFN(),
+                        'is_bool' => true,
+                        'desc' => '<strong>'.$this->l('Enable PayPo as separate channel').'</strong><br>'.$this->l('Additional contract required before including this channel'),
+                        'values' => array(
+                            array(
+                                'id' => 'active_on',
+                                'value' => true,
+                                'label' => $this->l('Enable')
+                            ),
+                            array(
+                                'id' => 'active_off',
+                                'value' => false,
+                                'label' => $this->l('Disable')
+                            )
+                        )
+                    ),
+
                     array(
                         'type' => 'switch',
                         'label' => '<span class="dev-option lastInSection">'.$this->l('Blik channel enabled').'</span>',
@@ -762,6 +842,7 @@ class dotpay extends PaymentModule
                     array(
                         'type' => 'text',
                         'name' => $this->config->getDotpayApiUsernameFN(),
+                        'prefix' => '<i class="icon-male" style="color: #9b6610;"></i>',
                         'label' => $this->l('Dotpay API username'),
                         'class' => 'fixed-width-xxl dev-option',
                         'desc' => $this->l('Your username for Dotpay user panel')
@@ -769,6 +850,7 @@ class dotpay extends PaymentModule
                     array(
                         'type' => 'text',
                         'name' => $this->config->getDotpayApiPasswordFN(),
+                        'prefix' => '<i class="icon-key" style="color: #9b6610;"></i>',
                         'label' => $this->l('Dotpay API password'),
                         'class' => 'fixed-width-xxl dev-option password-field lastInSection',
                         'desc' => $this->l('Your password for Dotpay user panel'),
@@ -798,6 +880,7 @@ class dotpay extends PaymentModule
                         'type' => 'text',
                         'name' => $this->config->getDotpayPvIdFN(),
                         'label' => $this->l('ID for foreign currencies account'),
+                        'prefix' => '<i style="font-weight: bold; color: #407786; font-size: 1.4em;">&#35;</i>',
                         'size' => 6,
                         'class' => 'fixed-width-sm dev-option pv-option',
                         'desc' => $this->l('Copy from Dotpay user panel').' <div id="infoID" /></div>',
@@ -807,6 +890,7 @@ class dotpay extends PaymentModule
                         'type' => 'text',
                         'name' => $this->config->getDotpayPvPINFN(),
                         'label' => $this->l('PIN for foreign currencies account'),
+                        'prefix' => '<i class="icon-key" style="color: #407786;"></i>',
                         'class' => 'fixed-width-xxl dev-option pv-option',
                         'desc' => $this->l('Copy from Dotpay user panel').' <div id="infoPIN" /></div>',
                         'required' => true
@@ -815,6 +899,7 @@ class dotpay extends PaymentModule
                         'type' => 'text',
                         'name' => $this->config->getDotpayPvCurrenciesFN(),
                         'label' => $this->l('Currencies used by foreign currencies account'),
+                        'prefix' => '<i class="icon-money" style="color: #407786;"></i>',
                         'class' => 'fixed-width-xxl dev-option pv-option lastInSection',
                         'desc' => $this->l('Enter currency codes separated by commas, for example: EUR,USD,GBP').'<br><b>'.$this->l('It is recommended to hide main channel for entered currencies').'</b>',
                     ),
@@ -887,15 +972,54 @@ class dotpay extends PaymentModule
                         'label' => $this->l('Reduce amount of order (in %)'),
                         'class' => 'fixed-width-lg dev-option discount-option',
                         'desc' => $this->l('Value of discount for given currency in % (eg. 1.90)').'<br><b>'.$this->l('Bigger amount will be chosen').'</b>',
-                    )
+                    ),
+                    
                 ),
                 'submit' => array(
-                    'class' => 'center-block',
+                    'class' => 'btn btn-success center-block',
                     'title' => $this->l('Save'),
                 ),
             )
         );
     }
+
+
+
+
+    public function getConfigCarr(){
+
+        $shipment_options = $this->getCarriers();
+        
+          foreach ($shipment_options as $customization) {
+            $datCarr = $this->config->Carrrieridprefix().$customization['id_option'];
+            $values1[$datCarr] = Configuration::get($datCarr);
+            
+        }
+
+         return $values1;
+    }
+
+/**
+ * return name of the assigned group to the carrier in the module settings
+ *
+ * @param [type] $a
+ * @return string
+ */
+    public function getchosenCarries($a = null) 
+    {   
+        $data = $this->getConfigCarr();
+        $value = '';      
+        foreach( $data as $key => $value ){
+            
+            $key= str_replace('CarrierDotpay_','',$key);
+            if($key == (int)$a ){
+                return $value;
+            }                 
+        }
+        return $value;
+    }
+
+
 
     /**
      * Returns settings values
@@ -903,7 +1027,13 @@ class dotpay extends PaymentModule
      */
     private function getConfigFormValues()
     {
-        return array(
+
+        $shipment_options = $this->getCarriers();
+        
+         $values1 = $this->getConfigCarr();
+
+        
+          $values2 = array(
             $this->config->getDotpayEnabledFN() => $this->config->isDotpayEnabled(),
             $this->config->getDotpayApiVersionFN() => $this->config->getDotpayApiVersion(),
             $this->config->getDotpayIdFN() => $this->config->getDotpayId(),
@@ -917,7 +1047,10 @@ class dotpay extends PaymentModule
             $this->config->getDotpayOneClickFN() => $this->config->isDotpayOneClick(),
             $this->config->getDotpayCreditCardFN() => $this->config->isDotpayCreditCard(),
             $this->config->getDotpayWidgetModeFN() => $this->config->isDotpayWidgetMode(),
+            $this->config->getDotpayChannelNameVisiblityFN() => $this->config->isDotpayWidgetChannelsName(),
             $this->config->getDotpayAdvancedModeFN() => $this->config->isDotpayAdvancedMode(),
+            $this->config->getDotpayPostponedPaymentFN() => $this->config->isDotpayPostponedPayment(),
+            $this->config->getDotpayPayPoFN() => $this->config->isDotpayPaypo(),
             $this->config->getDotpayWidgetDisCurrFN() => $this->config->getDotpayWidgetDisCurr(),
             $this->config->getDotpayTestModeFN() => $this->config->isDotpayTestMode(),
             $this->config->getDotpayPVFN() => $this->config->isDotpayPV(),
@@ -934,6 +1067,9 @@ class dotpay extends PaymentModule
             $this->config->getDotpayApiPasswordFN() => $this->config->getDotpayApiPassword(),
             'API_DATA_DESC' => '',
         );
+     
+        return array_merge($values2,$values1);
+        
     }
 
     /**
@@ -969,6 +1105,35 @@ class dotpay extends PaymentModule
             }
         }
     }
+
+    /**
+     * Delivery method
+     * To make a payment with postoned payment channel, specific data is required
+     * 
+     */
+    private function setDefaultCarrierOptions()
+    {
+        $shipment_options = $this->getCarriers();
+
+        for ($x = 0; $x <= count($shipment_options); $x++) {
+            echo Configuration::updateValue($this->config->Carrrieridprefix().$x, '');
+        } 
+
+        return true;
+    }
+
+
+    private function updateDotpayCarriersAssociation()
+    {
+        $shipment_options = $this->getCarriers();
+
+        for ($x = 0; $x <= count($shipment_options); $x++) {
+            echo Configuration::updateValue($this->config->Carrrieridprefix().$x,(int)(Tools::getValue($this->config->Carrrieridprefix().$x)));
+        } 
+
+
+    }
+
 
     /**
      * Makes the number values correct
@@ -1266,9 +1431,11 @@ class dotpay extends PaymentModule
                      ->setDotpayRefund(false)
                      ->setDotpayDispInstruction(false)
                      ->setDotpayTestMode(false)
+                     ->setDotpayPostponedPayment(false)
                      ->setDotpayAdvancedMode(false)
                      ->setDotpayBlik(false)
                      ->setDotpayMasterPass(false)
+                     ->setDotpayPaypo(false)
                      ->setDotpayOneClick(false)
                      ->setDotpayCreditCard(false)
                      ->setDotpayPV(false)
@@ -1365,6 +1532,154 @@ class dotpay extends PaymentModule
         $url .= "://".$this->getHostName().$_SERVER["REQUEST_URI"];
         return $url;
     }
+
+
+    /**
+     * Get all of active carriers
+     */
+
+    private function getCarriers()
+    {
+        $response = array();
+        $available_shipment_carriers = Carrier::getCarriers((int)$this->context->language->id);
+       /*
+        $response[0] = array(
+            'id_option' => 0,
+            'name' => 'Brak przewoźnika'
+        );
+        */
+        $i = 0;
+        foreach ($available_shipment_carriers as $shipment_carrier) {
+            if ((int)$shipment_carrier['active'] === 1) {
+                $response[$i]['id_option'] = $shipment_carrier['id_carrier'];
+                $response[$i]['name'] = $shipment_carrier['name'];
+                $response[$i]['delay'] = $shipment_carrier['delay'];
+                $response[$i]['is_free'] = $shipment_carrier['is_free'];
+                $i++;
+            }
+        }
+
+        return $response;
+    }
+
+
+    private function getCarrierinfo($id)
+    {
+        $response = array();
+        $available_shipment_carriers = Carrier::getCarriers((int)$this->context->language->id);
+
+        foreach ($available_shipment_carriers as $shipment_carrier) {
+            if ((int)$shipment_carrier['id_carrier'] === (int)$id ) {
+
+                $response['id'] = $shipment_carrier['id_carrier'];
+                $response['name'] = $shipment_carrier['name'];
+                $response['delay'] = $shipment_carrier['delay'];
+                $response['is_free'] = $shipment_carrier['is_free'];
+
+            }
+        }
+
+        return $response;
+    }
+
+
+
+
+/**
+ *  define groups of carrier (delivery method)
+ */
+
+function GetGroupsCarriers()  {
+
+    
+    $delivery_type = 
+    array(
+        0 => array('name' => $this->l('-- No method, choose:'), 'param_value' => $this->config->getCarrierNoneFN()), 
+        1 => array('name' => $this->l('Pickup point like UPS Access point, DHL Parcel Shop'), 'param_value' => $this->config->getCarrierPointDeliveryFN()), 
+        2 => array('name' => $this->l('Courier'), 'param_value' => $this->config->getCarrierCounterFN()), 
+        3 => array('name' => $this->l('Pickup in shop (click&collect)'), 'param_value' => $this->config->getCarrierShopAtPlaceFN()),
+        4 => array('name' => $this->l('Paczka w ruchu'), 'param_value' => $this->config->getCarrierParcelRuchFN()),  
+        5 => array('name' => $this->l('Parcel locker'), 'param_value' => $this->config->getCarrierParcelLockFN()) 
+    );
+
+        return $delivery_type;
+
+    }
+
+
+
+  /**
+   *  fragment of form to define carrier groups 
+   */  
+  
+ function getDisplayListCarriers()
+ {
+     $displayList = array();
+     
+     $shipment_options = $this->getCarriers();
+     $Groups = $this->GetGroupsCarriers();
+
+
+     for ($i = 0; $i < count($shipment_options); $i++) {
+    
+        
+        $idCarrier = $shipment_options[$i]['id_option'];
+        $carrierInfo = $this->getCarrierinfo($idCarrier);
+
+        if($carrierInfo['is_free'] == 1 ) $isfree = $this->l('Yes'); else $isfree = $this->l('No');
+
+         $displayList[$i] =  array(
+
+                        'type' => 'select',
+                        'lang' => true,
+                        'label' => '<strong>'.$shipment_options[$i]['name'].'</strong> ('.$idCarrier.')',
+                        'name' => $this->config->Carrrieridprefix().$shipment_options[$i]['id_option'],
+                        'class' => 'fixed-width-xxl dp_selectmenupostponed',
+                        'hint' => $idCarrier.': '.$carrierInfo['name'].'<br> '.$this->l('Delay shipment').': '.$carrierInfo['delay'].'<br> '.$this->l('Is free').': '.$isfree,
+                        'required' => true,
+                        'options' => array(
+                            'query' => $Groups,
+                            'id' => 'param_value',
+                            'name' => 'name'
+                             )
+                        );
+
+      }
+
+     return $displayList;
+ }
+
+
+
+  /**
+   *  Display form to define carrier groups 
+   */  
+
+private function getCarriersForm()
+{
+
+    return array(
+        'form' => array(
+            'legend' => array(
+                'title' => '<a href="index.php?controller=AdminCarriers" target="_blank">'.$this->l('Settings groups for delivery method').'</a><br><span id="DP_CarriersInfo"> '
+                . $this->l('If you use payment channels such as \"postponed payments\", select the appropriate delivery method for your carriers.').'</span><div id="DotcarrierError"></div>',
+                'icon' => 'icon-truck'
+            ),
+            'input' => array_slice(                
+                                    $this->getDisplayListCarriers()
+                                ,0),
+
+                'submit' => array(
+                    'title' => $this->l('Save'),
+                    'class' => 'btn btn-success center-block saveDotpayConfig1'
+                ),
+            ),
+    );
+}
+
+
+
+
 }
 
 /**

@@ -60,6 +60,22 @@ abstract class DotpayApi
      * @var int Number of MasterPass channel
      */
     public static $mpChannel = 71;
+
+    /**
+     *
+     * @var int Number of PayPo channel
+     */
+    public static $paypoChannel = 95;
+
+
+    /**
+     *
+     * @var int Minimum amount for PayPo channel
+     */
+    public static $paypoChannelamountmin = 40;
+
+
+
     /**
      *
      * @var DotpayController Controller object 
@@ -321,7 +337,7 @@ abstract class DotpayApi
     {
         $personalDataAgreements = $this->getAgreements('personal_data');
         if (trim($personalDataAgreements) == '') {
-            $personalDataAgreements = 'I acknowledge that in order to implement the payment process the Administrator of mine personal data is Dotpay sp. z o.o. (KRS 0000296790), 30-552 Kraków (Poland), Wielicka 72, +48126882600, <a href="mailto:bok@dotpay.pl">bok@dotpay.pl</a>, see <a title="regulations of payments" target="_blank" href="https://ssl.dotpay.pl/t2/cloudfs1/magellan_media/rodo_en">the full text of the information clause</a>.';
+            $personalDataAgreements = 'I acknowledge that in order to implement the payment process the Administrator of mine personal data is Dotpay sp. z o.o. (KRS 0000296790), 30-552 Kraków (Poland), Wielicka 28B, +48126882600, <a href="mailto:bok@dotpay.pl">bok@dotpay.pl</a>, see <a title="regulations of payments" target="_blank" href="https://ssl.dotpay.pl/t2/cloudfs1/magellan_media/rodo_en">the full text of the information clause</a>.';
         }
         return $personalDataAgreements;
     }

@@ -90,7 +90,7 @@ class DotpayInstruction extends ObjectModel
     /**
      * Street of payment recipient
      */
-    const DOTPAY_STREET = 'Wielicka 72';
+    const DOTPAY_STREET = 'Wielicka 28B';
     
     /**
      * Post code and city of payment recipient

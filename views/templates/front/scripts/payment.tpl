@@ -117,6 +117,8 @@ $(document).ready(function(){
                     strategyOneClick(target);
                 } else if('mp' === target) {
                     strategyMasterPass(target);
+                } else if('paypo' === target) {
+                    strategyPayPo(target);    
                 } else if('cc' === target) {
                     strategyCreditCard(target);
                 } else if('pv' === target) {
@@ -219,6 +221,11 @@ function strategyOneClick(target) {
 }
 
 function strategyMasterPass(target) {
+    $('form[form-target="' + target + '"] button[type="submit"]').attr('disabled', false).goTo();
+    standardStrategy(target);
+}
+
+function strategyPayPo(target) {
     $('form[form-target="' + target + '"] button[type="submit"]').attr('disabled', false).goTo();
     standardStrategy(target);
 }

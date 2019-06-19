@@ -61,6 +61,14 @@ class dotpaypaymentModuleFrontController extends DotpayController
         $target = '';
         $disabledChannels = $this->api->getSeparatedChannelsList();
         
+        if (($this->config->isDotpayWidgetChannelsName()) == 1)
+        {
+            $ChannelsWidgEnable = 'true';
+        } else {
+            $ChannelsWidgEnable = 'false';
+        }
+
+
         return array(
             'targetUrl' => $target,
             'meta_title' => $this->module->l('Dotpay online payment'),
@@ -83,7 +91,7 @@ class dotpaypaymentModuleFrontController extends DotpayController
             'inCheckout' => $inCheckout,
             'directPayment' => (int)!$this->config->isDotpayWidgetMode(),
 			'getinfoaboutTest' => $this->api->getinfoaboutTest(),
-			'testMessage' => $this->module->l('The payment module is in test mode. All payment information is fake. Order will not be processed!')
+            'testMessage' => $this->module->l('The payment module is in test mode. All payment information is fake. Order will not be processed!'),
         );
     }
 }
