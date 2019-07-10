@@ -448,6 +448,7 @@ function selectValidationPostponed() {
 					return v.replace(/\s+/g, '');
 				});
     		});
+            
 
 			$("input#DP_PV_PIN").bind('keyup paste keydown', function(e) {
 				$(this).val(function(_, v){
@@ -488,6 +489,17 @@ function selectValidationPostponed() {
         $('input#DP_WIDGET_DIS_CURR').bind('keyup blur', function () {
             $(this).val($(this).val().replace(/[^A-Z,]/g, ''))
         });
+
+
+             $("input#DP_RENEW_DAYS").attr("pattern", "[0-9]{,6}");
+             $("input#DP_RENEW_DAYS").attr("maxlength", "6");
+             $("input#DP_RENEW_DAYS").bind('keyup paste keydown', function(e) {
+                if (/\D/g.test(this.value)) {
+                    // Filter non-digits from input value.
+                    this.value = this.value.replace(/\D/g, '');
+                }
+                });
+
 
 
         var check = validateId($('#DP_USER_ID'), true) + validatePin($('#DP_USER_PIN'), true) +  validatePostponened(); 

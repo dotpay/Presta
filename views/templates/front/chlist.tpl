@@ -69,7 +69,6 @@
                 widgetFormContainerClass: 'my-form-widget-container',
                 offlineChannel: 'mark',
                 offlineChannelTooltip: true,
-                channelNameVisibility: {/literal}{$isChanelName|escape:'htmlall':'UTF-8'}{literal},
                 disabledChannels: [{/literal}{$disabledChannels|escape:'htmlall':'UTF-8'}{literal}],
                 host: '{/literal}{$channelApiUrl}{literal}',
             };

@@ -211,7 +211,7 @@ class DotpayDevApi extends DotpayApi
             );
         }
 //PayPo
-        if ($this->config->isDotpayPayPo() && $this->getChannelData(self::$paypoChannel) && $this->parent->isMainChannelEnabled() && ( (float)$this->parent->getDotAmount() >= self::$paypoChannelamountmin ) && Tools::strtoupper($this->parent->getDotCurrency() == 'PLN') ) {
+        if ($this->config->isDotpayPayPo() && $this->getChannelData(self::$paypoChannel) && $this->parent->isMainChannelEnabled() && ( (float)$this->parent->getDotAmount() >= self::$paypoChannelamountmin ) && ( (float)$this->parent->getDotAmount() >= self::$paypoChannelamountmax ) && Tools::strtoupper($this->parent->getDotCurrency() == 'PLN') ) {
             $this->addSeparatedChannel(self::$paypoChannel);
             $channelList['paypo'] = array(
                 'form' => $this->getFormHeader('paypo', $targetUrl),

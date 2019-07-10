@@ -47,6 +47,7 @@ $_MODULE['<{dotpay}prestashop>dotpay_b718adec73e04ce3ec720dd11a06a308'] = 'ID';
 $_MODULE['<{dotpay}prestashop>dotpay_6bd80fb6b48fa5920237ad8613991e05'] = 'Przepisz z panelu Dotpay';
 $_MODULE['<{dotpay}prestashop>dotpay_cdbc895d08b5d92db04174533a8548f7'] = 'PIN';
 $_MODULE['<{dotpay}prestashop>dotpay_4245499695408b974322be6f01b0d17a'] = 'Środowisko testowe';
+$_MODULE['<{dotpay}prestashop>dotpay_b73dec5ed06d30a1e3baf55f80a2d12e'] = 'Skopiuj z panelu administracyjnego Dotpay tylko numer (bez znaku \"#\")';
 $_MODULE['<{dotpay}prestashop>dotpay_8d2793a4310a7f20f7072a3f71586a6b'] = 'Używam konta testowego w Dotpay (ID testowe)';
 $_MODULE['<{dotpay}prestashop>dotpay_1d92e1d24e3fe5a00d72d7febbf563d9'] = 'Włącz ponawianie płatności';
 $_MODULE['<{dotpay}prestashop>dotpay_2f8b8bcfbf4c4d1a41f7ff0d29a0e4a7'] = 'Zalogowani klienci mogą wznowić przerwaną płatność';

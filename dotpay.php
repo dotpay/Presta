@@ -76,7 +76,7 @@ class dotpay extends PaymentModule
     {
         $this->name = 'dotpay';
         $this->tab = 'payments_gateways';
-        $this->version = '2.4.1rc1';
+        $this->version = '2.4.1';
         $this->author = 'tech@dotpay.pl';
         $this->ps_versions_compliancy = array('min' => '1.6', 'max' => '1.6.9');
         $this->bootstrap = true;
@@ -193,45 +193,54 @@ class dotpay extends PaymentModule
         $sellerApi = new DotpaySellerApi($this->config->getDotpaySellerApiUrl());
 
         $version = DotpayGithubApi::getLatestVersion();
-        $this->context->smarty->assign(array(
-            'regMessEn' => $this->config->isDotpayTestMode() || !$this->config->isAccountConfigOk(),
-            'targetForUrlc' => $this->context->link->getModuleLink('dotpay', 'callback', array('ajax' => '1'), $this->isSSLEnabled()),
-            'moduleMainDir' => $this->_path,
-            'testMode' => $this->config->isDotpayTestMode(),
-            'oldVersion' => !version_compare(_PS_VERSION_, "1.6.0.1", ">="),
-            'badPhpVersion' => !version_compare(PHP_VERSION, "5.4", ">="),
-            'confOK' => $this->config->isAccountConfigOk() && $this->config->isDotpayEnabled(),
-            'moduleVersion' => $this->version,
-            'apiVersion' => $this->config->getDotpayApiVersion(),
-            'phpVersion' => PHP_VERSION,
-            'minorPhpVersion' => '5.4',
-            'badNewIdMessage' => $this->l('Incorrect ID (required 6 digits)'),
-            'badOldIdMessage' => $this->l('Incorrect ID (5 digits maximum)'),
-            'carriernotselectedMessage' => $this->l('You must choose a delivery method for all of this values'),
-            'badNewPinMessage' => $this->l('Incorrect PIN (minimum 16 and maximum 32 alphanumeric characters)'),
-            'badOldPinMessage' => $this->l('Incorrect PIN (0 or 16 alphanumeric characters)'),
-            'valueLowerThanZero' => $this->l('The value must be greater than zero.'),
-            'testSellerId' => $this->api->checkSellerId($this->config->getDotpayId()),
-            'testApiAccount' => $sellerApi->isAccountRight(
-                                    $this->config->getDotpayApiUsername(),
-                                    $this->config->getDotpayApiPassword(),
-                                    $this->config->getDotpayApiVersion()
-            ),
-            'testSellerPin' => $sellerApi->isSellerPinOk(
-                                    $this->config->getDotpayApiUsername(),
-                                    $this->config->getDotpayApiPassword(),
-                                    $this->config->getDotpayApiVersion(),
-                                    $this->config->getDotpayId(),
-                                    $this->config->getDotpayPIN()
-            ),
-            'urlWithNewVersion' => $version['url'],
-            'obsoletePlugin' => version_compare($version['version'], $this->version, '>'),
-            'canNotCheckPlugin' => $version['version'] === null,
-            'deliverylistmethod' =>$this->getConfigCarr()
+        $shipment_options = $this->getCarriers();
 
-        ));
-          
-          $this->updateDotpayCarriersAssociation();
+        $arraysettings1 = array(
+                                'regMessEn' => $this->config->isDotpayTestMode() || !$this->config->isAccountConfigOk(),
+                                'targetForUrlc' => $this->context->link->getModuleLink('dotpay', 'callback', array('ajax' => '1'), $this->isSSLEnabled()),
+                                'moduleMainDir' => $this->_path,
+                                'testMode' => $this->config->isDotpayTestMode(),
+                                'oldVersion' => !version_compare(_PS_VERSION_, "1.6.0.1", ">="),
+                                'badPhpVersion' => !version_compare(PHP_VERSION, "5.4", ">="),
+                                'confOK' => $this->config->isAccountConfigOk() && $this->config->isDotpayEnabled(),
+                                'moduleVersion' => $this->version,
+                                'apiVersion' => $this->config->getDotpayApiVersion(),
+                                'phpVersion' => PHP_VERSION,
+                                'minorPhpVersion' => '5.4',
+                                'badNewIdMessage' => $this->l('Incorrect ID (required 6 digits)'),
+                                'badOldIdMessage' => $this->l('Incorrect ID (5 digits maximum)'),
+                                'carriernotselectedMessage' => $this->l('You must choose a delivery method for all of this values'),
+                                'badNewPinMessage' => $this->l('Incorrect PIN (minimum 16 and maximum 32 alphanumeric characters)'),
+                                'badOldPinMessage' => $this->l('Incorrect PIN (0 or 16 alphanumeric characters)'),
+                                'valueLowerThanZero' => $this->l('The value must be greater than zero.'),
+                                'testSellerId' => $this->api->checkSellerId($this->config->getDotpayId()),
+                                'testApiAccount' => $sellerApi->isAccountRight(
+                                                        $this->config->getDotpayApiUsername(),
+                                                        $this->config->getDotpayApiPassword(),
+                                                        $this->config->getDotpayApiVersion()
+                                ),
+                                'testSellerPin' => $sellerApi->isSellerPinOk(
+                                                        $this->config->getDotpayApiUsername(),
+                                                        $this->config->getDotpayApiPassword(),
+                                                        $this->config->getDotpayApiVersion(),
+                                                        $this->config->getDotpayId(),
+                                                        $this->config->getDotpayPIN()
+                                ),
+                                'urlWithNewVersion' => $version['url'],
+                                'obsoletePlugin' => version_compare($version['version'], $this->version, '>'),
+                                'canNotCheckPlugin' => $version['version'] === null,
+                                'deliverylistmethod' =>$this->getConfigCarr()
+
+                );
+
+               
+                for ($x = 0; $x <= count($shipment_options); $x++) {
+                    $arraysettings1[$this->config->Carrrieridprefix().$x] = (int)(Tools::getValue($this->config->Carrrieridprefix().$x));
+                }
+
+
+        $this->context->smarty->assign($arraysettings1);
+
 
         $template = $this->context->smarty->fetch($this->local_path.'views/templates/admin/configure.tpl');
         return $template.$this->renderForm();
@@ -478,7 +487,6 @@ class dotpay extends PaymentModule
         $carriers_form = $this->getCarriersForm();
         $general_settings_form = $this->getConfigForm();
 
-      //  return $helper->generateForm(array($this->getConfigForm()));
 
         return $helper->generateForm(array($general_settings_form, $carriers_form));
     }
@@ -546,6 +554,7 @@ class dotpay extends PaymentModule
                         'label' => $this->l('ID'),
                         'prefix' => '<i style="font-weight: bold; color: #10279b; font-size: 1.4em;">&#35;</i>',
                         'size' => 6,
+                        'maxlength' => 6,
                         'class' => 'fixed-width-sm',
                         'desc' => $this->l('Copy from Dotpay user panel').' <div id="infoID" /></div>',
                         'required' => true
@@ -557,7 +566,8 @@ class dotpay extends PaymentModule
                         'prefix' => '<i class="icon-key" style="color: #10279b;"></i>',
                         'suffix' => '<i class="icon-eye-slash" id="eyelook" style="color: #2eacce; cursor : zoom-in;"></i>',
                         'class' => 'fixed-width-xxl',
-                        'desc' => $this->l('Copy from Dotpay user panel').' <div id="infoPIN" /></div>',
+                        'maxlength' => 32,
+                        'desc' => $this->l('Copy only number (without "#" char) from the Dotpay user panel.').' <div id="infoPIN" /></div>',
                         'required' => true
                     ),
                     array(
@@ -599,27 +609,7 @@ class dotpay extends PaymentModule
                             )
                         )
                     ),
-                    /*
-                    array(
-                        'type' => 'radio',
-                        'label' => '<span class="dev-option channel-name-show">'.$this->l('Channel name visibility').'</span>',
-                        'name' => $this->config->getDotpayChannelNameVisiblityFN(),
-                        'is_bool' => false,
-                        'desc' => '<b>'.$this->l('Display payment channels names in widget').'</b><br>'.$this->l('This function is available if "Dotpay widget on shop site is Enable"'),                           
-                        'values' => array(
-                            array(
-                                'id' => 'active_on',
-                                'value' => true,
-                                'label' => $this->l('Show')
-                            ),
-                            array(
-                                'id' => 'active_off',
-                                'value' => false,
-                                'label' => $this->l('Hide')
-                            )
-                        )
-                    ),
-                    */
+
                     array(
                         'type' => 'radio',
                         'label' => '<span class="">'.$this->l('Use the additional features necessary for postponed payments').'</span>',
@@ -735,7 +725,7 @@ class dotpay extends PaymentModule
                             )
                         )
                     ),
-
+/*
                     array(
                         'type' => 'switch',
                         'label' => '<span class="dev-option">'.$this->l('PayPo channel enabled').'</span>',
@@ -755,7 +745,7 @@ class dotpay extends PaymentModule
                             )
                         )
                     ),
-
+*/
                     array(
                         'type' => 'switch',
                         'label' => '<span class="dev-option lastInSection">'.$this->l('Blik channel enabled').'</span>',
@@ -882,8 +872,9 @@ class dotpay extends PaymentModule
                         'label' => $this->l('ID for foreign currencies account'),
                         'prefix' => '<i style="font-weight: bold; color: #407786; font-size: 1.4em;">&#35;</i>',
                         'size' => 6,
+                        'maxlength' => 6,
                         'class' => 'fixed-width-sm dev-option pv-option',
-                        'desc' => $this->l('Copy from Dotpay user panel').' <div id="infoID" /></div>',
+                        'desc' => $this->l('Copy only number (without "#" char) from the Dotpay user panel.').' <div id="infoID" /></div>',
                         'required' => true
                     ),
                     array(
@@ -892,6 +883,7 @@ class dotpay extends PaymentModule
                         'label' => $this->l('PIN for foreign currencies account'),
                         'prefix' => '<i class="icon-key" style="color: #407786;"></i>',
                         'class' => 'fixed-width-xxl dev-option pv-option',
+                        'maxlength' => 32,
                         'desc' => $this->l('Copy from Dotpay user panel').' <div id="infoPIN" /></div>',
                         'required' => true
                     ),
@@ -1122,17 +1114,6 @@ class dotpay extends PaymentModule
         return true;
     }
 
-
-    private function updateDotpayCarriersAssociation()
-    {
-        $shipment_options = $this->getCarriers();
-
-        for ($x = 0; $x <= count($shipment_options); $x++) {
-            echo Configuration::updateValue($this->config->Carrrieridprefix().$x,(int)(Tools::getValue($this->config->Carrrieridprefix().$x)));
-        } 
-
-
-    }
 
 
     /**
@@ -1442,7 +1423,7 @@ class dotpay extends PaymentModule
                      ->setDotpayPvId('')
                      ->setDotpayPvPIN('')
                      ->setDotpayPvCurrencies('')
-                     ->setDotpayWidgetMode(true)
+                     ->setDotpayWidgetMode(false)
                      ->setDotpayWidgetDisCurr('')
                      ->setDotpayExCh(false)
                      ->setDotpayExAmount(0)

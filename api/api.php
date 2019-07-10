@@ -74,6 +74,12 @@ abstract class DotpayApi
      */
     public static $paypoChannelamountmin = 40;
 
+    /**
+     *
+     * @var int Maximum amount for PayPo channel
+     */
+    public static $paypoChannelamountmax = 1000;
+
 
 
     /**

@@ -218,11 +218,6 @@ abstract class DotpayController extends ModuleFrontController
     public function PayerDatadostawaJsonBase64() {
 
                 $customer = array (
-
-                                 "registered_since" => $this->getregisteredCustomerDate(),
-                                 "order_count" => $this->getCustomerOrdersCount(),
-
-
                                  "payer" => array(
                                          "first_name" => $this->NewPersonName($this->getCustomer()->firstname),
                                          "last_name" => $this->NewPersonName($this->getCustomer()->lastname),
@@ -230,7 +225,6 @@ abstract class DotpayController extends ModuleFrontController
                                          "phone" => $this->getDotPhone()
                                           ),
                                  "order" => array(
-                                         "delivery_type" => $this->getselectedCarrierMethodGroup(),
                                          "delivery_address" => array(
 
                                                            "city" => $this->getDotCity(1),
@@ -238,19 +232,26 @@ abstract class DotpayController extends ModuleFrontController
                                                            "building_number" => $this->getDotStreetAndStreetN1(1)['street_n1'],
                                                            "postcode" => $this->getDotPostcode(1),
                                                            "country" => $this->getDotCountry(1)
-                                                                                     )
+                                                                     )
                                             )
 
                                  );
 
-                             $customer_base64 = base64_encode(json_encode($customer,320));
-
-
-                        return $customer_base64;
+                                 if ($this->getregisteredCustomerDate() !== null) 
+                                 {
+                                    $customer["registered_since"] = $this->getregisteredCustomerDate();
+                                    $customer["order_count"] = $this->getCustomerOrdersCount();
+                                 } 
+                                
+                                if ($this->getSelectedCarrierMethodGroup() !== null) 
+                                {
+                                    $customer["order"]["delivery_type"] = $this->getSelectedCarrierMethodGroup();
+                                }
+                             
+                                $customer_base64 = base64_encode(json_encode($customer, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+    
+                            return $customer_base64;    
     }
-
-
-
 
 
     /**
