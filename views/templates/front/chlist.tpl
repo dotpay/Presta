@@ -23,6 +23,23 @@
 *
 *}
 {literal}
+    <style type="text/css">
+        
+        @media (min-width:1000px) {
+            .only-dotpay-logo {
+                padding-top: 15px
+            }
+        }
+
+        @media (min-width:200px) {
+	        .only-dotpay-logo {
+		        padding-top: 5px
+            }
+        }
+    </style>
+{/literal} 
+
+{literal}
     <script type="text/javascript" language="JavaScript">
         window.dotpayConfig = {
             "isWidget": Boolean({/literal}{$isWidget|escape:'htmlall':'UTF-8'}{literal})
@@ -53,7 +70,7 @@
                 offlineChannel: 'mark',
                 offlineChannelTooltip: true,
                 disabledChannels: [{/literal}{$disabledChannels|escape:'htmlall':'UTF-8'}{literal}],
-                host: '{/literal}{$channelApiUrl}{literal}'
+                host: '{/literal}{$channelApiUrl}{literal}',
             };
         {/literal}
         </script>

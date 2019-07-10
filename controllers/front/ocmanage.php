@@ -33,7 +33,7 @@ class dotpayocmanageModuleFrontController extends DotpayController
      */
     public function initContent()
     {
-        $this->display_column_left = false;
+        $this->display_column_left = true;
         parent::initContent();
 
         $this->context->smarty->assign(array(

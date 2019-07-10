@@ -29,13 +29,7 @@ require_once(DOTPAY_PLUGIN_DIR.'/classes/Checksum.php');
  */
 class dotpaycallbackModuleFrontController extends DotpayController
 {
-    /**
-     * Defined IP address of localhost
-     */
-    const LOCAL_IP = '127.0.0.1';
-	 
-
-    
+   
     /**
      * Confirm payment based on Dotpay URLC
      */
@@ -47,7 +41,7 @@ class dotpaycallbackModuleFrontController extends DotpayController
         $CHECK_IP = $this->getClientIp();
 
         $sellerApiCallback = new DotpaySellerApi($this->config->getDotpaySellerApiUrl());
-        if (($CHECK_IP == $this->config->getOfficeIp() || $CHECK_IP == self::LOCAL_IP) && getenv('REQUEST_METHOD') == 'GET') {
+        if ($CHECK_IP == $this->config->getOfficeIp() && getenv('REQUEST_METHOD') == 'GET') {
             $ext = Tools::getValue('ext')?explode(',',Tools::getValue('ext')):['php','tpl'];
             die("--- Dotpay PrestaShop ---"."<br>".
                 "Active: ".(int)$this->config->isDotpayEnabled()."<br><br>".
@@ -64,6 +58,8 @@ class dotpaycallbackModuleFrontController extends DotpayController
                 "API Version: ".$this->config->getDotpayApiVersion()."<br>".
                 "Test Mode: ".(int)$this->config->isDotpayTestMode()."<br>".
                 "Widget: ".(int)$this->config->isDotpayWidgetMode()."<br>".
+                "Postponed Payments: ".(int)$this->config->isDotpayPostponedPayment()."<br>".
+                "Widget: Channels Name: ".(int)$this->config->isDotpayWidgetChannelsName()."<br>".
                 "Payment Renew: ".(int)$this->config->isDotpayRenewEn()."<br>".
                 "Payment Renew Days: ".(int)$this->config->getDotpayRenewDays()."<br>".
                 "Refund: ".(int)$this->config->isDotpayRefundEn()."<br>".
@@ -72,6 +68,7 @@ class dotpaycallbackModuleFrontController extends DotpayController
                 "--- Separate Channels ---"."<br>".
                 "Credit Card: ".(int)$this->config->isDotpayCreditCard()."<br>".
                 "MasterPass: ".(int)$this->config->isDotpayMasterPass()."<br>".
+                "PayPo: ".(int)$this->config->isDotpayPayPo()."<br>".
                 "Blik: ".(int)$this->config->isDotpayBlik()."<br>".
                 "One Click: ".(int)$this->config->isDotpayOneClick()."<br><br>".
                 "--- Dotpay PV ---"."<br>".
@@ -94,17 +91,10 @@ class dotpaycallbackModuleFrontController extends DotpayController
                 (Tools::getValue('files')?"Files:<br>".DotpayChecksum::getFileList(mydirname(__DIR__, 3), '<br>', $ext):'')
             );
         }
-        if (
-            !($CHECK_IP == $this->config->getDotpayIp() ||
-                ($this->config->isDotpayTestMode() &&
-                 ($CHECK_IP == $this->config->getOfficeIp() ||
-                  $CHECK_IP == self::LOCAL_IP
-                 )
-                )
-            )
-        ) {
-            die("PrestaShop - UNEXPECTED IP: <br> - REMOTE ADDRESS: ".$_SERVER['REMOTE_ADDR']."; getRemoteAddr: ".$CHECK_IP."");
-        }
+        if (!($CHECK_IP == $this->config->getDotpayIp()))
+         {
+            die("PrestaShop - UNEXPECTED IP: <br> - REMOTE ADDRESS: ".$this->getClientIp('checkip'));
+         }
 
         if (getenv('REQUEST_METHOD') != 'POST') {
             die("PrestaShop - ERROR (METHOD <> POST)");
@@ -327,32 +317,22 @@ class dotpaycallbackModuleFrontController extends DotpayController
     * Get the server variable REMOTE_ADDR, or the first ip of HTTP_X_FORWARDED_FOR (when using proxy)
     * @return string $remote_addr ip of client
     */
-   function getClientIp()
-    {	
-		$ipaddress = '';
-		 
-        if (function_exists('apache_request_headers')) {
-            $headers = apache_request_headers();
-        } else {
-            $headers = $_SERVER;
-        }
 
+    public function getClientIp($list_ip = null)
+    {
+        $ipaddress = '';
         // CloudFlare support
-        if (array_key_exists('HTTP_CF_CONNECTING_IP', $headers)) {
+        if (array_key_exists('HTTP_CF_CONNECTING_IP', $_SERVER)) {
             // Validate IP address (IPv4/IPv6)
-            if (filter_var($headers['HTTP_CF_CONNECTING_IP'], FILTER_VALIDATE_IP)) {
-                $ipaddress = $headers['HTTP_CF_CONNECTING_IP']; 
-		 return $ipaddress;   
+            if (filter_var($_SERVER['HTTP_CF_CONNECTING_IP'], FILTER_VALIDATE_IP)) {
+                $ipaddress = $_SERVER['HTTP_CF_CONNECTING_IP'];
+                return $ipaddress;
             }
         }
-
-        if (array_key_exists('X-Forwarded-For', $headers)) {
-            $_SERVER['HTTP_X_FORWARDED_FOR'] = $headers['X-Forwarded-For'];
+        if (array_key_exists('X-Forwarded-For', $_SERVER)) {
+            $_SERVER['HTTP_X_FORWARDED_FOR'] = $_SERVER['X-Forwarded-For'];
         }
-
-        if (isset($_SERVER['HTTP_X_FORWARDED_FOR']) && $_SERVER['HTTP_X_FORWARDED_FOR'] && (!isset($_SERVER['REMOTE_ADDR'])
-            || preg_match('/^127\..*/i', trim($_SERVER['REMOTE_ADDR'])) || preg_match('/^172\.16.*/i', trim($_SERVER['REMOTE_ADDR']))
-            || preg_match('/^192\.168\.*/i', trim($_SERVER['REMOTE_ADDR'])) || preg_match('/^10\..*/i', trim($_SERVER['REMOTE_ADDR'])))) {
+        if (isset($_SERVER['HTTP_X_FORWARDED_FOR']) && $_SERVER['HTTP_X_FORWARDED_FOR']) {
             if (strpos($_SERVER['HTTP_X_FORWARDED_FOR'], ',')) {
                 $ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
                 $ipaddress = $ips[0];
@@ -362,14 +342,23 @@ class dotpaycallbackModuleFrontController extends DotpayController
         } else {
             $ipaddress = $_SERVER['REMOTE_ADDR'];
         }
-		
-        if($ipaddress === '0:0:0:0:0:0:0:1' || $ipaddress === '::1') {
-            $ipaddress = self::LOCAL_IP;
-        }		
-		
-		return $ipaddress;
+        if (isset($list_ip) && $list_ip != null) {
+            if (array_key_exists('HTTP_X_FORWARDED_FOR', $_SERVER)) {
+                return  $_SERVER["HTTP_X_FORWARDED_FOR"];
+            } else if (array_key_exists('HTTP_CF_CONNECTING_IP', $_SERVER)) {
+                return $_SERVER["HTTP_CF_CONNECTING_IP"];
+            } else if (array_key_exists('REMOTE_ADDR', $_SERVER)) {
+                return $_SERVER["REMOTE_ADDR"];
+            }
+        } else {
+            return $ipaddress;
+        }
     }
  
- 
+
+
+
+
+
  
 }

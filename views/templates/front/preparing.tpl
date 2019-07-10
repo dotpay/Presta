@@ -17,7 +17,7 @@
 * versions in the future. If you wish to customize PrestaShop for your
 * needs please refer to http://www.prestashop.com for more information.
 *
-*  @author    Dotpay Team <tech@dotpay.pl>
+*  @author    Dotpay Team < tech@dotpay.pl >
 *  @copyright Dotpay
 *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *
@@ -29,7 +29,7 @@
         {dotpayGenerateForm form=$hiddenForm}
         {literal}
         <script type="text/javascript">
-            setTimeout(function(){document.getElementsByClassName('dotpay-form')[0].submit();}, 1);
+            setTimeout(function(){document.getElementsByClassName('dotpay-form')[0].submit();}, 0);
         </script>
         {/literal}
     </body>

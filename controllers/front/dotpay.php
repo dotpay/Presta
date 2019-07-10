@@ -39,13 +39,14 @@ abstract class DotpayController extends ModuleFrontController
      * @var Customer Object with customer data
      */
     protected $customer;
+    protected $customer_delivery;
     
     /**
      *
      * @var Address Object with customer address data
      */
     protected $address;
-    
+    protected $address_deliv;
     /**
      *
      * @var DotpayApi Api for selected Dotpay payment API (dev or legacy)
@@ -89,26 +90,170 @@ abstract class DotpayController extends ModuleFrontController
     
     /**
      * Returns address object, created from correct source
+     * @param $address_deliv, 1 - id_address_delivery, else - id_address_invoice
      * @return Address
      */
-    public function getAddress() {
+    public function getAddress($address_deliv = 0) {  
         if ($this->address === null) {
             $this->address = new Address($this->getInitializedCart()->id_address_invoice);
+
         }
-        return $this->address;
+        if ($this->address_deliv === null) {
+            $this->address_deliv = new Address($this->getInitializedCart()->id_address_delivery); 
+
+        }
+
+        if($address_deliv == 1) {
+            return $this->address_deliv; 
+        } else {
+            return $this->address;
+        }
     }
     
     /**
      * Returns customer object, created from correct source
-     * @return Customer
+     * @return Customer /billing address
      */
+
     public function getCustomer() {
+
         if ($this->customer === null) {
             $this->customer = new Customer($this->getInitializedCart()->id_customer);
         }
-        return $this->customer;
+
+            return $this->customer;
+
     }
+
+
+      /**
+     * Returns customer object, created from correct source
+     * @return Customer /delivery address
+     */
+
+    public function getCustomerDeliv() {
+
+       $cart = $this->context->cart;
+
+        $addressDeliveryId = $cart->id_address_delivery;
+        $deliveryddress = new AddressCore($addressDeliveryId);
     
+        if ($this->customer_delivery === null) {
+                $this->customer_delivery = $deliveryddress;
+        }    
+           
+            return $this->customer_delivery;
+    }
+
+    /**
+     * Returns date customer registered account
+     * @return string, format 'Y-m-d'
+     */
+    public function getregisteredCustomerDate() {
+            
+            $date = $this->getCustomerDeliv()->date_add;
+            $format = "Y-m-d H:i:s";
+
+            if(date($format, strtotime($date)) == date($date)) {
+
+                $date2 = DateTime::createFromFormat('Y-m-d H:i:s', $date);
+            
+              return $date2->format('Y-m-d');
+            
+            } else {
+
+                return null;
+            }
+
+    }
+
+    /**
+     * Returns number of all orders for customer since his registration
+     * @return int
+     */
+    public function getCustomerOrdersCount() {
+            
+            $customer_id = $this->getCustomer()->id;
+            $orders = Order::getCustomerOrders($customer_id ,true);
+
+            $allOrders = count($orders);
+
+
+            if(isset($allOrders)) {
+            
+              return (int)$allOrders;
+            
+            } else {
+
+                return 0;
+            }
+
+    }
+
+
+    /**
+     * Returns total shipping cost from cart
+     * @return shipping total
+     */
+    public function getShippingTotalCart() 
+    {
+
+        return $this->context->cart->getOrderTotal(true, Cart::ONLY_SHIPPING);
+    }
+
+
+    public function getselectedCarrierMethodGroup()
+    {
+        $carrrier_id_sel = context::getContext()->cart->id_carrier;
+        $name = $this->module->getchosenCarries($carrrier_id_sel);
+
+        return $name;
+
+    }
+
+    /**
+     * Returns data to 'customer' parameter
+     * @return string encoded base64
+     */
+    public function PayerDatadostawaJsonBase64() {
+
+                $customer = array (
+                                 "payer" => array(
+                                         "first_name" => $this->NewPersonName($this->getCustomer()->firstname),
+                                         "last_name" => $this->NewPersonName($this->getCustomer()->lastname),
+                                         "email" => $this->getDotEmail(),
+                                         "phone" => $this->getDotPhone()
+                                          ),
+                                 "order" => array(
+                                         "delivery_address" => array(
+
+                                                           "city" => $this->getDotCity(1),
+                                                           "street" => $this->getDotStreetAndStreetN1(1)['street'],
+                                                           "building_number" => $this->getDotStreetAndStreetN1(1)['street_n1'],
+                                                           "postcode" => $this->getDotPostcode(1),
+                                                           "country" => $this->getDotCountry(1)
+                                                                     )
+                                            )
+
+                                 );
+
+                                 if ($this->getregisteredCustomerDate() !== null) 
+                                 {
+                                    $customer["registered_since"] = $this->getregisteredCustomerDate();
+                                    $customer["order_count"] = $this->getCustomerOrdersCount();
+                                 } 
+                                
+                                if ($this->getSelectedCarrierMethodGroup() !== null) 
+                                {
+                                    $customer["order"]["delivery_type"] = $this->getSelectedCarrierMethodGroup();
+                                }
+                             
+                                $customer_base64 = base64_encode(json_encode($customer, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+    
+                            return $customer_base64;    
+    }
+
+
     /**
      * Returns currency id, came from correct source
      * @return int
@@ -461,25 +606,36 @@ abstract class DotpayController extends ModuleFrontController
      * Returns firstname of customer
      * @return string
      */
-    public function getDotFirstname()
-    {
-        return $this->NewPersonName($this->getCustomer()->firstname);
+    public function getDotFirstname($address_deliv = 0)
+    {   
+        if($address_deliv == 1)
+        {
+            return $this->NewPersonName($this->getCustomerDeliv()->firstname);
+        } else {
+            return $this->NewPersonName($this->getCustomer()->firstname);
+        }
+        
     }
     
     /**
      * Returns lastname of customer
      * @return string
      */
-    public function getDotLastname()
+    public function getDotLastname($address_deliv = 0)
     {
-		return $this->NewPersonName($this->getCustomer()->lastname);
+        if($address_deliv == 1)
+        {
+            return $this->NewPersonName($this->getCustomerDeliv()->lastname);
+        } else {
+            return $this->NewPersonName($this->getCustomer()->lastname);
+        }
     }
     
     /**
      * Returns email of customer
      * @return string
      */
-    public function getDotEmail()
+    public function getDotEmail($address_deliv = 0)
     {	
 		$email = $this->getCustomer()->email;
 		
@@ -497,9 +653,14 @@ abstract class DotpayController extends ModuleFrontController
      * Returns phone of customer
      * @return string
      */
-    public function getDotPhone()
-    {
-        $address = $this->getAddress();
+    public function getDotPhone($address_deliv = 0)
+    {   
+        if($address_deliv == 1) {
+            $address = $this->getCustomerDeliv();
+        } else {
+            $address = $this->getAddress();
+        }
+
         $phone = '';
         if ($address->phone != '') {
             $phone = $this->NewPhone($address->phone);
@@ -513,9 +674,13 @@ abstract class DotpayController extends ModuleFrontController
      * Returns street and building number even if customer didn't get a value of building number
      * @return array
      */
-    public function getDotStreetAndStreetN1()
+    public function getDotStreetAndStreetN1($address_deliv = 0)
     {
-        $address = $this->getAddress();
+        if($address_deliv == 1) {
+            $address = $this->getCustomerDeliv();
+        } else {
+            $address = $this->getAddress();
+        }
 		
         $streetA = $address->address1;
         $street = $this->NewStreet($streetA);
@@ -542,18 +707,28 @@ abstract class DotpayController extends ModuleFrontController
      * Returns a city of customer
      * @return string 
      */
-    public function getDotCity()
-    {
-        return $this->NewCity($this->getAddress()->city);
+    public function getDotCity($address_deliv = 0)
+    {   
+        if($address_deliv == 1) {
+            return $this->NewCity($this->getCustomerDeliv()->city); //delivery address
+        } else {
+            return $this->NewCity($this->getAddress()->city);  //invoices address
+        }
+
     }
     
     /**
      * Returns a postcode of customer
      * @return string 
      */
-    public function getDotPostcode()
-    {
-        return $this->NewPostcode($this->getAddress()->postcode);
+    public function getDotPostcode($address_deliv = 0)
+    {  
+        if($address_deliv == 1) {
+            return $this->NewPostcode($this->getCustomerDeliv()->postcode); 
+        } else {
+            return $this->NewPostcode($this->getAddress()->postcode);
+        }
+        
     }
     
     /**
@@ -585,10 +760,16 @@ abstract class DotpayController extends ModuleFrontController
      * Returns a country of customer
      * @return string 
      */
-    public function getDotCountry()
+    public function getDotCountry($address_deliv = 0)
     {
         $country = new Country((int)($this->getAddress()->id_country));
-        return $country->iso_code;
+        $country_delivery = new Country((int)($this->getCustomerDeliv()->id_country));
+
+        if($address_deliv == 1) {
+            return $country_delivery->iso_code;
+        } else {
+            return $country->iso_code;
+        }
     }
     
     /**
@@ -608,7 +789,16 @@ abstract class DotpayController extends ModuleFrontController
     {
         return $this->module->getPath().'views/img/MasterPass.png';
     }
-    
+  
+   /**
+     * Returns an URL to MasterPass channel logo
+     * @return string
+     */
+    public function getDotPayPoLogo()
+    {
+        return $this->module->getPath().'views/img/PayPo.png';
+    }
+
     /**
      * Returns an URL to One click card channel logo
      * @return string

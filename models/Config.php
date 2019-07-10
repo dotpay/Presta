@@ -213,6 +213,7 @@ class DotpayConfig
         return Configuration::get($this->getDotpayIdFN());
     }
     
+
     public function getDotpayPINFN()
     {
         return 'DP_USER_PIN';
@@ -226,7 +227,74 @@ class DotpayConfig
     {
         return Configuration::get($this->getDotpayPINFN());
     }
+
+
+
+   /**
+    * Carrier options
+    */ 
     
+    public function Carrrieridprefix()
+    {
+        $Carrrier_id_prefix ='CarrierDotpay_';
+
+        return $Carrrier_id_prefix;
+    }
+
+
+
+
+
+    public function getCarrierNoneFN()
+    {
+        return '';
+    }
+
+    public function getCarrierPointDeliveryFN()
+    {
+        return 'PICKUP_POINT';
+    }
+
+    public function getCarrierShopAtPlaceFN()
+    {
+        return 'PICKUP_SHOP';
+    }
+
+
+    public function getCarrierParcelRuchFN()
+    {
+        return 'PACZKA_W_RUCHU';
+    }
+
+    public function getCarrierParcelLockFN()
+    {
+        return 'PACZKOMAT';
+    }
+
+
+    public function getCarrierCounterFN()
+    {
+        return 'COURIER';
+    }
+
+
+   
+    public function getDotpayPostponedPaymentFN()
+    {
+        return 'DP_POSTPONED_PAYMENT';
+    }
+    public function setDotpayPostponedPayment($advancedMode)
+    {
+        Configuration::updateValue($this->getDotpayPostponedPaymentFN(), $advancedMode);
+        return $this;
+    }
+    public function isDotpayPostponedPayment()
+    {
+        return Configuration::get($this->getDotpayPostponedPaymentFN());
+    }
+
+
+
     public function getDotpayWidgetModeFN()
     {
         return 'DP_WIDGET_MODE';
@@ -278,6 +346,21 @@ class DotpayConfig
     {
         return 'DP_WIDGET_DIS_CURR';
     }
+    
+    public function getDotpayChannelNameVisiblityFN()
+    {
+        return 'DP_WIDGET_DIS_CHANNELS_NAME';
+    }
+  
+
+    public function isDotpayWidgetChannelsName()
+    {
+        if ($this->getDotpayApiVersion() === 'legacy') {
+            return false;
+        }
+        return Configuration::get($this->getDotpayChannelNameVisiblityFN());
+    }
+  
     public function setDotpayWidgetDisCurr($disableCurrencies)
     {
         Configuration::updateValue($this->getDotpayWidgetDisCurrFN(), $disableCurrencies);
@@ -307,6 +390,26 @@ class DotpayConfig
         }
         return Configuration::get($this->getDotpayMasterPassFN());
     }
+
+    public function getDotpayPayPoFN()
+    {
+        return 'DP_PAYPO_MODE';
+    }
+    public function setDotpayPayPo($paypo)
+    {
+        Configuration::updateValue($this->getDotpayPayPoFN(), $paypo);
+        return $this;
+    }
+    public function isDotpayPaypo()
+    {
+        if ($this->getDotpayApiVersion() === 'legacy') {
+            return false;
+        }
+        return Configuration::get($this->getDotpayPayPoFN());
+    }
+
+
+
     
     public function getDotpayBlikFN()
     {
@@ -659,7 +762,7 @@ class DotpayConfig
      */
     public function getDotpayAvailableCurrency()
     {
-        return array( 'EUR', 'USD', 'GBP', 'JPY','CZK', 'SEK', 'UAH', 'RON', 'PLN' );
+        return array( 'PLN', 'EUR', 'USD', 'GBP', 'JPY', 'CZK', 'SEK', 'UAH', 'RON', 'NOK', 'BGN', 'CHF', 'HRK', 'HUF', 'RUB' );
     }
     
     /**
@@ -668,7 +771,7 @@ class DotpayConfig
      */
     public function getDotpayAvailableLanguage()
     {
-        return array( 'pl', 'en', 'de', 'it','fr', 'es', 'cz', 'ru', 'hu','cs', 'ro', 'ru' );
+        return array( 'pl', 'en', 'de', 'it','fr', 'es', 'cz', 'ru', 'hu','cs', 'ro', 'ru', 'uk' );
     }
     
     /**
