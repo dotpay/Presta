@@ -27,7 +27,7 @@ class DotpayGithubApi
     
     public static function getLatestVersion()
     {
-        $url = self::$githubUrl.'/repos/dotpay/PrestaShop/releases/latest';
+        $url = self::$githubUrl.'/repos/dotpay/PrestaShop-1.6/releases/latest';
         $curl = new DotpayCurl();
         $curl->addOption(CURLOPT_URL, $url);
         self::setCurlOption($curl);

@@ -89,7 +89,7 @@ class dotpay extends PaymentModule
 
         $this->displayName = $this->l('Dotpay');
         if (_PS_VERSION_ < 1.6) {
-            $this->description = $this->l('WARNING! This Dotpay payment module is designed only for the PrestaShop 1.6 and later. For older version PrestaShop use an older version of the Dotpay payment module  available to download from the following address: https://github.com/dotpay/PrestaShop/tags');
+            $this->description = $this->l('WARNING! This Dotpay payment module is designed only for the PrestaShop 1.6 and later. For older version PrestaShop use an older version of the Dotpay payment module  available to download from the following address: https://github.com/dotpay/PrestaShop-1.6/tags');
             parent::uninstall();
         } else {
             $this->description = $this->l('Fast and secure internet payments');

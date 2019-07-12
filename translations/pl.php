@@ -24,7 +24,7 @@
 global $_MODULE;
 $_MODULE = array();
 $_MODULE['<{dotpay}prestashop>dotpay_d082f054837b2c2b99b891eec5888a0c'] = 'Dotpay';
-$_MODULE['<{dotpay}prestashop>dotpay_4d8273457c820b4826aa6b816661dfe1'] = 'UWAGA! Ta wersja modułu płatności Dotpay dedykowana jest dla PrestaShop w wersji co najmniej 1.6. Dla starszej wersji PrestaShop, użyj starszej wersji modułu Dotpay, którą możesz pobrać z naszego repozytorium:  https://github.com/dotpay/PrestaShop/tags';
+$_MODULE['<{dotpay}prestashop>dotpay_4d8273457c820b4826aa6b816661dfe1'] = 'UWAGA! Ta wersja modułu płatności Dotpay dedykowana jest dla PrestaShop w wersji co najmniej 1.6. Dla starszej wersji PrestaShop, użyj starszej wersji modułu Dotpay, którą możesz pobrać z naszego repozytorium:  https://github.com/dotpay/PrestaShop-1.6/tags';
 $_MODULE['<{dotpay}prestashop>dotpay_ad3cbca6839068ffa83d2d153048e279'] = 'Szybkie i bezpieczne płatności';
 $_MODULE['<{dotpay}prestashop>dotpay_057227babaa6faf8edce476ad7bb0bbf'] = 'Czy jesteś pewien że chcesz usnąć moduł płatności Dotpay ?';
 $_MODULE['<{dotpay}prestashop>dotpay_d903fe77e52f341cb89d595ff4de7e6c'] = 'Błędne ID (wymagane 6 cyfr)';
@@ -215,7 +215,7 @@ $_MODULE['<{dotpay}prestashop>configure_fd0d185799de7c07eec990e379022a7d'] = 'na
 $_MODULE['<{dotpay}prestashop>configure_bac630adb4d5cd6ed5c91c79ad168a1d'] = 'Twój moduł jest aktualny';
 $_MODULE['<{dotpay}prestashop>configure_94dbe985fde10a4c8a76aa7ccd81a122'] = 'Dzięki temu masz gwarancję bezpieczeństwa oraz możliwość używania najnowszych rozwiązań, oferowanych przez firmę Dotpay.';
 $_MODULE['<{dotpay}prestashop>configure_7f231c4944d78cb9904f76af4b59b779'] = 'Sprawdź instrukcję przed konfiguracją modułu:';
-$_MODULE['<{dotpay}prestashop>configure_8003d89d8fd47a30cbfdfef5ce917fd8'] = 'https://github.com/dotpay/PrestaShop/releases/download/v2.2.2/Dotpay_PrestaShop_modul-Instrukcja_v2.2.2_pl.pdf';
+$_MODULE['<{dotpay}prestashop>configure_8003d89d8fd47a30cbfdfef5ce917fd8'] = 'https://github.com/dotpay/PrestaShop-1.6/releases/download/v2.2.2/Dotpay_PrestaShop_modul-Instrukcja_v2.2.2_pl.pdf';
 $_MODULE['<{dotpay}prestashop>configure_315ec54b764e386076868028f30f3a94'] = 'Pobierz instrukcję konfiguracji dla tego modułu';
 $_MODULE['<{dotpay}prestashop>configure_d02eb64052c3fb26b9219e9dff4175fe'] = 'pobierz instrukcję';
 $_MODULE['<{dotpay}prestashop>back_22c1c4383031f483d44c365df03c684c'] = 'Koniec płatności Dotpay';
