@@ -76,7 +76,7 @@ class dotpay extends PaymentModule
     {
         $this->name = 'dotpay';
         $this->tab = 'payments_gateways';
-        $this->version = '2.4.1';
+        $this->version = '2.4.2';
         $this->author = 'tech@dotpay.pl';
         $this->ps_versions_compliancy = array('min' => '1.6', 'max' => '1.6.9');
         $this->bootstrap = true;
@@ -233,7 +233,7 @@ class dotpay extends PaymentModule
 
                 );
 
-               
+
                 for ($x = 0; $x <= count($shipment_options); $x++) {
                     $arraysettings1[$this->config->Carrrieridprefix().$x] = (int)(Tools::getValue($this->config->Carrrieridprefix().$x));
                 }
@@ -487,8 +487,13 @@ class dotpay extends PaymentModule
         $carriers_form = $this->getCarriersForm();
         $general_settings_form = $this->getConfigForm();
 
+        if(is_array($carriers_form))
+        {
+            return $helper->generateForm(array($general_settings_form, $carriers_form));
+        }else{
+            return $helper->generateForm(array($general_settings_form));
+        }
 
-        return $helper->generateForm(array($general_settings_form, $carriers_form));
     }
 
     /**
@@ -617,7 +622,7 @@ class dotpay extends PaymentModule
                         'is_bool' => true,
                         'class' => 'dev-option postponed-enable-option',
                         'hint' => $this->l('Enable if you want to use channels offering postponed payments.'),
-                        'desc' => '<b>'.$this->l('The function is necessary if you have an active additional payment channel for postponed payments on your Dotpay account.').'</b><br>'.$this->l('Additional payment information such as: delivery address, date of account activation in the store or the number of previous orders can be sent to the payment operator.'),                           
+                        'desc' => '<b>'.$this->l('The function is necessary if you have an active additional payment channel for postponed payments on your Dotpay account.').'</b><br>'.$this->l('Additional payment information such as: delivery address, date of account activation in the store or the number of previous orders can be sent to the payment operator.'),
                         'values' => array(
                             array(
                                 'id' => 'active_on',
@@ -965,7 +970,7 @@ class dotpay extends PaymentModule
                         'class' => 'fixed-width-lg dev-option discount-option',
                         'desc' => $this->l('Value of discount for given currency in % (eg. 1.90)').'<br><b>'.$this->l('Bigger amount will be chosen').'</b>',
                     ),
-                    
+
                 ),
                 'submit' => array(
                     'class' => 'btn btn-success center-block',
@@ -979,14 +984,17 @@ class dotpay extends PaymentModule
 
 
     public function getConfigCarr(){
-
         $shipment_options = $this->getCarriers();
-        
-          foreach ($shipment_options as $customization) {
-            $datCarr = $this->config->Carrrieridprefix().$customization['id_option'];
-            $values1[$datCarr] = Configuration::get($datCarr);
-            
-        }
+         $values1 = null;
+
+        if(is_array($shipment_options)){
+            foreach ($shipment_options as $customization) {
+              $datCarr = $this->config->Carrrieridprefix().$customization['id_option'];
+              $values1[$datCarr] = Configuration::get($datCarr);
+          }
+      }
+
+
 
          return $values1;
     }
@@ -997,17 +1005,21 @@ class dotpay extends PaymentModule
  * @param [type] $a
  * @return string
  */
-    public function getchosenCarries($a = null) 
-    {   
+    public function getchosenCarries($a = null)
+    {
         $data = $this->getConfigCarr();
-        $value = '';      
-        foreach( $data as $key => $value ){
-            
-            $key= str_replace('CarrierDotpay_','',$key);
-            if($key == (int)$a ){
-                return $value;
-            }                 
+        $value = '';
+        if ($data != null)
+        {
+            foreach( $data as $key => $value ){
+
+                $key= str_replace('CarrierDotpay_','',$key);
+                if($key == (int)$a ){
+                    return $value;
+                }
+            }
         }
+
         return $value;
     }
 
@@ -1021,10 +1033,10 @@ class dotpay extends PaymentModule
     {
 
         $shipment_options = $this->getCarriers();
-        
+
          $values1 = $this->getConfigCarr();
 
-        
+
           $values2 = array(
             $this->config->getDotpayEnabledFN() => $this->config->isDotpayEnabled(),
             $this->config->getDotpayApiVersionFN() => $this->config->getDotpayApiVersion(),
@@ -1059,9 +1071,15 @@ class dotpay extends PaymentModule
             $this->config->getDotpayApiPasswordFN() => $this->config->getDotpayApiPassword(),
             'API_DATA_DESC' => '',
         );
-     
-        return array_merge($values2,$values1);
-        
+
+        if(is_array($values1))
+        {
+            return array_merge($values2,$values1);
+        } else {
+
+        }
+        return $values2;
+
     }
 
     /**
@@ -1101,7 +1119,7 @@ class dotpay extends PaymentModule
     /**
      * Delivery method
      * To make a payment with postoned payment channel, specific data is required
-     * 
+     *
      */
     private function setDefaultCarrierOptions()
     {
@@ -1109,7 +1127,7 @@ class dotpay extends PaymentModule
 
         for ($x = 0; $x <= count($shipment_options); $x++) {
             echo Configuration::updateValue($this->config->Carrrieridprefix().$x, '');
-        } 
+        }
 
         return true;
     }
@@ -1572,15 +1590,15 @@ class dotpay extends PaymentModule
 
 function GetGroupsCarriers()  {
 
-    
-    $delivery_type = 
+
+    $delivery_type =
     array(
-        0 => array('name' => $this->l('-- No method, choose:'), 'param_value' => $this->config->getCarrierNoneFN()), 
-        1 => array('name' => $this->l('Pickup point like UPS Access point, DHL Parcel Shop'), 'param_value' => $this->config->getCarrierPointDeliveryFN()), 
-        2 => array('name' => $this->l('Courier'), 'param_value' => $this->config->getCarrierCounterFN()), 
+        0 => array('name' => $this->l('-- No method, choose:'), 'param_value' => $this->config->getCarrierNoneFN()),
+        1 => array('name' => $this->l('Pickup point like UPS Access point, DHL Parcel Shop'), 'param_value' => $this->config->getCarrierPointDeliveryFN()),
+        2 => array('name' => $this->l('Courier'), 'param_value' => $this->config->getCarrierCounterFN()),
         3 => array('name' => $this->l('Pickup in shop (click&collect)'), 'param_value' => $this->config->getCarrierShopAtPlaceFN()),
-        4 => array('name' => $this->l('Paczka w ruchu'), 'param_value' => $this->config->getCarrierParcelRuchFN()),  
-        5 => array('name' => $this->l('Parcel locker'), 'param_value' => $this->config->getCarrierParcelLockFN()) 
+        4 => array('name' => $this->l('Paczka w ruchu'), 'param_value' => $this->config->getCarrierParcelRuchFN()),
+        5 => array('name' => $this->l('Parcel locker'), 'param_value' => $this->config->getCarrierParcelLockFN())
     );
 
         return $delivery_type;
@@ -1590,20 +1608,20 @@ function GetGroupsCarriers()  {
 
 
   /**
-   *  fragment of form to define carrier groups 
-   */  
-  
+   *  fragment of form to define carrier groups
+   */
+
  function getDisplayListCarriers()
  {
      $displayList = array();
-     
+
      $shipment_options = $this->getCarriers();
      $Groups = $this->GetGroupsCarriers();
 
 
      for ($i = 0; $i < count($shipment_options); $i++) {
-    
-        
+
+
         $idCarrier = $shipment_options[$i]['id_option'];
         $carrierInfo = $this->getCarrierinfo($idCarrier);
 
@@ -1633,29 +1651,34 @@ function GetGroupsCarriers()  {
 
 
   /**
-   *  Display form to define carrier groups 
-   */  
+   *  Display form to define carrier groups
+   */
 
 private function getCarriersForm()
 {
-
-    return array(
-        'form' => array(
-            'legend' => array(
-                'title' => '<a href="index.php?controller=AdminCarriers" target="_blank">'.$this->l('Settings groups for delivery method').'</a><br><span id="DP_CarriersInfo"> '
-                . $this->l('If you use payment channels such as \"postponed payments\", select the appropriate delivery method for your carriers.').'</span><div id="DotcarrierError"></div>',
-                'icon' => 'icon-truck'
-            ),
-            'input' => array_slice(                
-                                    $this->getDisplayListCarriers()
-                                ,0),
-
-                'submit' => array(
-                    'title' => $this->l('Save'),
-                    'class' => 'btn btn-success center-block saveDotpayConfig1'
+    if(count($this->getCarriers()))
+    {
+        return array(
+            'form' => array(
+                'legend' => array(
+                    'title' => '<a href="index.php?controller=AdminCarriers" target="_blank">'.$this->l('Settings groups for delivery method').'</a><br><span id="DP_CarriersInfo"> '
+                    . $this->l('If you use payment channels such as \"postponed payments\", select the appropriate delivery method for your carriers.').'</span><div id="DotcarrierError"></div>',
+                    'icon' => 'icon-truck'
                 ),
-            ),
-    );
+                'input' => array_slice(
+                                        $this->getDisplayListCarriers()
+                                    ,0),
+
+                    'submit' => array(
+                        'title' => $this->l('Save'),
+                        'class' => 'btn btn-success center-block saveDotpayConfig1'
+                    ),
+                ),
+        );
+    }else{
+        return null;
+    }
+
 }
 
 

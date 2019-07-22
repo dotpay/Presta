@@ -173,7 +173,7 @@
     var carrierNotset = '{/literal}{$carriernotselectedMessage|escape:'htmlall':'UTF-8'}{literal}';
     var badID = '';
     var badPin = '';
-                  
+
     function setFieldsForApi() {
         var apiVersion = $('.api-select').val();
         badID = (apiVersion=='dev')?badNewID:badOldID;
@@ -200,19 +200,19 @@
     function setFieldsForPostponed() {
         if($('.postponed-enable-option input[name="DP_POSTPONED_PAYMENT"]:checked').val()=='1') {
             $('div#fieldset_1_1').show();
-              var check1 = validateId($('#DP_USER_ID'), true) + validatePin($('#DP_USER_PIN'), true) +  validatePostponened(); 
-               if(check1) { 
+              var check1 = validateId($('#DP_USER_ID'), true) + validatePin($('#DP_USER_PIN'), true) +  validatePostponened();
+               if(check1) {
                     disableSubmit(true);
                } else {
                     disableSubmit(false);
-               }    
+               }
 
 
         } else {
             $('div#fieldset_1_1').hide();
-               
-               var check2 = validateId($('#DP_USER_ID'), true) + validatePin($('#DP_USER_PIN'), true); 
-               if(check2) { 
+
+               var check2 = validateId($('#DP_USER_ID'), true) + validatePin($('#DP_USER_PIN'), true);
+               if(check2) {
                     disableSubmit(true);
                } else {
                     disableSubmit(false);
@@ -227,7 +227,7 @@
             $('.renew-option').parents('.form-group').hide();
         }
     }
-    
+
     function setFieldsForPV() {
         if($('.pv-enable-option input[name="DP_PV_MODE"]:checked').val()=='1') {
             $('.pv-option').parents('.form-group').show();
@@ -235,7 +235,7 @@
             $('.pv-option').parents('.form-group').hide();
         }
     }
-    
+
     function setFieldsForExCh() {
         if($('.excharge-enable-option input[name="DP_EXCH_EN"]:checked').val()=='1') {
             $('.exch-option').parents('.form-group').show();
@@ -243,7 +243,7 @@
             $('.exch-option').parents('.form-group').hide();
         }
     }
-    
+
     function setFieldsForDiscount() {
         if($('.discount-enable-option input[name="DP_DISC_EN"]:checked').val()=='1') {
             $('.discount-option').parents('.form-group').show();
@@ -251,21 +251,21 @@
             $('.discount-option').parents('.form-group').hide();
         }
     }
-    
 
-    
+
+
     function disableSubmit(mode) {
         $("button[name=saveDotpayConfig]").prop("disabled", mode);
     }
-    
+
     function prepareValidation() {
         $('.form-group').find('.col-lg-9').append('<span class="errorMessage"></span>');
     }
-    
+
     function setError(obj, message) {
         obj.parents('.form-group').find('.errorMessage').html(message);
     }
-    
+
     function validateId(idElem, empty) {
         var idLength = idElem.val().length;
         if(empty===true && idLength === 0) {
@@ -282,7 +282,7 @@
             return 0;
         }
     }
-    
+
     function validatePin(pinElem, empty) {
         var pinLength = pinElem.val().length;
         if(empty===true && pinLength === 0) {
@@ -297,7 +297,7 @@
             return 0;
         }
     }
-    
+
     function validateLTZ(obj) {
         if(parseFloat(obj.val())<0) {
             setError(obj, valueLowerThanZero);
@@ -328,9 +328,9 @@ function selectValidationPostponed() {
                   }   else {
                     return 1;
                   }
-             }  
+             }
     }
-    
+
 
     function validateGUI(check) {
         setFieldsForApi();
@@ -355,7 +355,7 @@ function selectValidationPostponed() {
         else
             disableSubmit(false);
     }
-    
+
     function setVisibilityForAdvancedMode() {
         if($('[name=DP_ADVANCED_MODE]:checked').val() == '1')
             $('#advanced-settings').css('display','block');
@@ -364,32 +364,37 @@ function selectValidationPostponed() {
     }
 
     function resetselectedDeliverymethodDotpay() {
-            var DeliveryCarrierVar ={/literal}{$deliverylistmethod|@json_encode nofilter};{literal}
-            
-            $.each(DeliveryCarrierVar, function (key, data) {
-                var key2 = '#' + key;
-                $(key2).find('option').removeAttr("selected");
- 
-          })  
+            var DeliveryCarrierVar = {/literal}{$deliverylistmethod|@json_encode nofilter};{literal}
+
+            if(DeliveryCarrierVar != null) {
+                $.each(DeliveryCarrierVar, function (key, data) {
+                    var key2 = '#' + key;
+                    $(key2).find('option').removeAttr("selected");
+
+              })
+            }
 
     }
 
     function setselectedDeliverymethodDotpay() {
-            var DeliveryCarrierVar ={/literal}{$deliverylistmethod|@json_encode nofilter};{literal}
-            
-            $.each(DeliveryCarrierVar, function (key, data) {
+            var DeliveryCarrierVar = {/literal}{$deliverylistmethod|@json_encode nofilter};{literal}
 
-                var key2 = '#' + key;    
-                var children = $(key2).children();
+            if(DeliveryCarrierVar != null) {
+                $.each(DeliveryCarrierVar, function (key, data) {
 
-                for(var i=0;i<children.length; i++){
-                    if (children[i].value == data) {
-                        children[i].selected = true;
-                        break;
+                    var key2 = '#' + key;
+                    var children = $(key2).children();
+
+                    for(var i=0;i<children.length; i++){
+                        if (children[i].value == data) {
+                            children[i].selected = true;
+                            break;
+                        }
                     }
-                }
-          })  
+              })
+            }
     }
+
 
    function PINvisibleEye() {
 
@@ -405,7 +410,7 @@ function selectValidationPostponed() {
                 $('i#eyelook').attr('style', 'color : #2eacce; cursor : zoom-in;');
             }
         });
-   } 
+   }
 
 
     $(document).ready(function(){
@@ -427,7 +432,7 @@ function selectValidationPostponed() {
 
 
 		$(".dp_selectmenupostponed").change(function() {
-            var dp_check3 = validateId($('#DP_USER_ID'), true) + validatePin($('#DP_USER_PIN'), true) +  validatePostponened(); 
+            var dp_check3 = validateId($('#DP_USER_ID'), true) + validatePin($('#DP_USER_PIN'), true) +  validatePostponened();
                  if(dp_check3) {
                        disableSubmit(true);
                    } else {
@@ -438,8 +443,8 @@ function selectValidationPostponed() {
                         $("#DotcarrierError").html('<i class="icon-exclamation-circle"></i> ' + carrierNotset);
                     } else {
                         $("#DotcarrierError").html('');
-                    }   
-    	});  
+                    }
+    	});
 
         //remove spaces from ID, PIN input
 
@@ -448,13 +453,13 @@ function selectValidationPostponed() {
 					return v.replace(/\s+/g, '');
 				});
     		});
-            
+
 
 			$("input#DP_PV_PIN").bind('keyup paste keydown', function(e) {
 				$(this).val(function(_, v){
 					return v.replace(/\s+/g, '');
 				});
-    		});            
+    		});
 
 
             // ID
@@ -491,7 +496,7 @@ function selectValidationPostponed() {
         });
 
 
-             $("input#DP_RENEW_DAYS").attr("pattern", "[0-9]{,6}");
+             $("input#DP_RENEW_DAYS").attr("pattern", "[0-9]{0,6}");
              $("input#DP_RENEW_DAYS").attr("maxlength", "6");
              $("input#DP_RENEW_DAYS").bind('keyup paste keydown', function(e) {
                 if (/\D/g.test(this.value)) {
@@ -502,15 +507,15 @@ function selectValidationPostponed() {
 
 
 
-        var check = validateId($('#DP_USER_ID'), true) + validatePin($('#DP_USER_PIN'), true) +  validatePostponened(); 
+        var check = validateId($('#DP_USER_ID'), true) + validatePin($('#DP_USER_PIN'), true) +  validatePostponened();
         if(check)
             disableSubmit(true);
 
 
-        
 
- 
-        
+
+
+
       $('.postponed-enable-option input[name="DP_POSTPONED_PAYMENT"]').change(function(){
             setFieldsForPostponed();
         });
@@ -520,20 +525,20 @@ function selectValidationPostponed() {
             setFieldsForPV();
             validateGUI();
         });
-        
+
         $('.pv-enable-option input[name="DP_PV_MODE"]').change(function(){
             setFieldsForPV();
             validateGUI();
         });
-        
+
         $('.excharge-enable-option input[name="DP_EXCH_EN"]').change(function(){
             setFieldsForExCh();
         });
-        
+
         $('.discount-enable-option input[name="DP_DISC_EN"]').change(function(){
             setFieldsForDiscount();
         });
-        
+
         $('.api-select,#DP_USER_ID,#DP_USER_PIN,#DP_PV_ID,#DP_PV_PIN,#DP_EXCH_AM,#DP_EXCH_PERC,#DP_DISC_AM,#DP_DISC_PERC').change(function(){
             validateGUI();
             validatePostponened();
@@ -541,7 +546,7 @@ function selectValidationPostponed() {
     });
 </script>
 <style>
-    
+
     div#fieldset_1_1.panel > div.form-wrapper {
         margin-top: 70px;
     }
@@ -550,10 +555,10 @@ function selectValidationPostponed() {
         color: #c64aca;
         font-weight: bold;
     }
-    
+
     #DotcarrierError {
-        text-align:center; 
-        color:red; 
+        text-align:center;
+        color:red;
         text-transform: none;
         font: 400 14px/1.42857 "Open Sans",Helvetica,Arial,sans-serif;
     }
