@@ -447,14 +447,16 @@ function selectValidationPostponed() {
     	});
 
         //remove spaces from ID, PIN input
-
+            $("input#DP_USER_PIN").attr("autocomplete", "off");
+            $("input#DP_USER_PIN").attr("disabled", "disabled");
 			$("input#DP_USER_PIN").bind('keyup paste keydown', function(e) {
 				$(this).val(function(_, v){
 					return v.replace(/\s+/g, '');
 				});
     		});
 
-
+            $("input#DP_PV_PIN").attr("autocomplete", "off");
+            $("input#DP_PV_PIN").attr("disabled", "disabled");
 			$("input#DP_PV_PIN").bind('keyup paste keydown', function(e) {
 				$(this).val(function(_, v){
 					return v.replace(/\s+/g, '');
@@ -463,6 +465,8 @@ function selectValidationPostponed() {
 
 
             // ID
+             $("input#DP_USER_ID").attr("autocomplete", "off");
+             $("input#DP_USER_ID").attr("disabled", "disabled");
              $("input#DP_USER_ID").attr("pattern", "[0-9]{4,6}");
              $("input#DP_USER_ID").attr("maxlength", "6");
              $("input#DP_USER_ID").bind('keyup paste keydown', function(e) {
@@ -472,6 +476,8 @@ function selectValidationPostponed() {
                 }
                 });
 
+             $("input#DP_PV_ID").attr("autocomplete", "off");
+             $("input#DP_PV_ID").attr("disabled", "disabled");
              $("input#DP_PV_ID").attr("pattern", "[0-9]{4,6}");
              $("input#DP_PV_ID").attr("maxlength", "6");
              $("input#DP_PV_ID").bind('keyup paste keydown', function(e) {
@@ -505,15 +511,28 @@ function selectValidationPostponed() {
                 }
                 });
 
+// input: login and password for api
+        $("input#DP_DISC_API_UNAME").attr("autocomplete", "off");
+        $("input#DP_DISC_API_UNAME").attr("disabled", "disabled");
 
+        $("input#DP_DISC_API_PASSWD").attr("autocomplete", "off");
+        $("input#DP_DISC_API_PASSWD").attr("disabled", "disabled");
+
+        $("input#DP_DISC_API_UNAME").bind('keyup paste keydown', function(e) {
+            $(this).val(function(_, v){
+                return v.replace(/\s+/g, '');
+            });
+        });
+
+        $("input#DP_DISC_API_PASSWD").bind('keyup paste keydown', function(e) {
+            $(this).val(function(_, v){
+                return v.replace(/\s+/g, '');
+            });
+        });
 
         var check = validateId($('#DP_USER_ID'), true) + validatePin($('#DP_USER_PIN'), true) +  validatePostponened();
         if(check)
             disableSubmit(true);
-
-
-
-
 
 
       $('.postponed-enable-option input[name="DP_POSTPONED_PAYMENT"]').change(function(){
@@ -543,6 +562,17 @@ function selectValidationPostponed() {
             validateGUI();
             validatePostponened();
         });
+
+        setTimeout(function() {
+            $("#DP_USER_ID").removeAttr("disabled");
+            $("#DP_PV_ID").removeAttr("disabled");
+            $("#DP_PV_PIN").removeAttr("disabled");
+            $("#DP_USER_PIN").removeAttr("disabled");
+            $("#DP_DISC_API_UNAME").removeAttr("disabled");
+            $("#DP_DISC_API_PASSWD").removeAttr("disabled");
+        }, 300);
+
+
     });
 </script>
 <style>
