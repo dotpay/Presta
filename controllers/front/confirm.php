@@ -67,6 +67,7 @@ class dotpayconfirmModuleFrontController extends DotpayController
                 $instruction->amount = $payment['instruction']['amount'];
                 $instruction->currency = $payment['instruction']['currency'];
                 $instruction->number = $payment['operation']['number'];
+                $instruction->title = substr($payment['operation']['description'],0,50);
                 $instruction->hash = DotpayInstruction::gethashFromPayment($payment);
                 $instruction->is_cash = $isCash;
                 $instruction->order_id = Tools::getValue('order_id');
@@ -74,6 +75,9 @@ class dotpayconfirmModuleFrontController extends DotpayController
                 
                 if (isset($payment['instruction']['recipient'])) {
                     $instruction->bank_account = $payment['instruction']['recipient']['bank_account_number'];
+                    $instruction->dotpay_name = $payment['instruction']['recipient']['name'];
+                } else {
+                    $instruction->dotpay_name = DotpayInstruction::DOTPAY_NAME;
                 }
                 
                 try {
@@ -104,10 +108,10 @@ class dotpayconfirmModuleFrontController extends DotpayController
 					'template' => './confirm/'.$template,
 					'amount' => $instruction->amount,
 					'currencyInstr' => $instruction->currency,
-					'title' => $instruction->number,
+					'title' => $instruction->number .' '.$instruction->title,
 					'bankAccount' => $instruction->bank_account,
 					'address' => $address,
-					'recipient' => DotpayInstruction::DOTPAY_NAME,
+					'recipient' => $instruction->dotpay_name,
 					'street' => DotpayInstruction::DOTPAY_STREET,
 					'city' => DotpayInstruction::DOTPAY_CITY,
 					'template' => './confirm/'.$template,

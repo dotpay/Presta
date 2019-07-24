@@ -22,6 +22,7 @@
 *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *
 *}
+
 {literal}
     <style type="text/css">
         
@@ -55,9 +56,10 @@
 {include file='./scripts/jquery.transit.tpl'}
 {include file='./scripts/payment.tpl'}
 
+
 {if isset($goodCurency) }
     
-    {if isset($isWidget)}
+    {if $isWidget === true}
         <link href="{$dotpayUrl|escape:'htmlall':'UTF-8'}widget/payment_widget.min.css" rel="stylesheet">
         <script type="text/javascript">
         {literal}
@@ -109,3 +111,9 @@
 {else}
     <p class="alert alert-danger">{l s='Your currency is not yet supported by Dotpay' mod='dotpay'}</p>
 {/if}
+
+
+<div id="dp_opacity"><h2 class="dp_opacity_text">
+<span style="font-size: 24px; color: #d6ffb0a8;">
+  <i class="icon-refresh icon-spin"></i>
+</span>{l s='Your order is being processed, please wait...' mod='dotpay'}</h2></div>

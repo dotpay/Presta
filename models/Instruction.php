@@ -39,12 +39,19 @@ class DotpayInstruction extends ObjectModel
      * @var int Id of order, which is connected with instruction
      */
     public $order_id;
+   
     
     /**
      *
      * @var string Number of payment
      */
     public $number;
+
+    /**
+     *
+     * @var string Description of payment
+     */
+    public $title;
     
     /**
      *
@@ -85,7 +92,7 @@ class DotpayInstruction extends ObjectModel
     /**
      * Name of payment recipient
      */
-    const DOTPAY_NAME = 'DOTPAY SA';
+    const DOTPAY_NAME = 'Dotpay sp. z o.o.';
     
     /**
      * Street of payment recipient

@@ -131,6 +131,7 @@ $_MODULE['<{dotpay}prestashop>dotpay_45564511f0170dc5ad3aae689463ed32'] = 'Jeśl
 $_MODULE['<{dotpay}prestashop>dotpay_d0d225e8c7c5fe2b4b7640b2644c9a08'] = 'Musisz przypisać metodę dostarczenie dla wszystkich wymienionych poniżej przewoźników';
 $_MODULE['<{dotpay}prestashop>dotpay_68b329da9893e34099c7d8ad5cb9c940'] = 'Musisz wybrać metodę dostawy dla wszystkich z poniższych wartości';
 $_MODULE['<{dotpay}prestashop>dotpay_945a9d7b3bff7232fdb7f019814cad5f'] = 'Kontynuuj płatność';
+$_MODULE['<{dotpay}prestashop>chlist_80d2cb32d2e9c63daecb572fbd224aaf'] = 'Trwa kompletowanie zamówienia, proszę czekać...';
 $_MODULE['<{dotpay}prestashop>dotpay_e5389aa4e18da97c0cdffe26064ae320'] = 'Wyrażam zgodę na powtarzające się obciążanie rachunku mojej karty płatniczej dla celów realizacji płatności One Click, tytułem zakupu towarów lub usług oferowanych przez Sklep.';
 $_MODULE['<{dotpay}prestashop>dotpay_a8e9cee94334a6c941fc9767b784cac6'] = 'Wybierz zarejestrowaną kartę';
 $_MODULE['<{dotpay}prestashop>dotpay_7f94a8d52e1e292e13d4ca19757a5117'] = 'Zarządzaj swoimi zarejestrowanymi kartami';

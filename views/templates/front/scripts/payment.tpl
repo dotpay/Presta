@@ -157,13 +157,25 @@ $(document).ready(function(){
         
         /* fix for onepagecheckout module */
         $('a[data-type=dotpay_payment_link]').click(function(e){
-            $(this).closest('div.row').find('form.dotpay-form').submit();
+             $('div#dp_opacity').show('fade');
+             $(this).closest('div.row').find('form.dotpay-form').submit();
         });
         
         /* Fix for jQuery Uniform */
         $('.oneclick-margin').parents('label').addClass('oneclick-margin-label');
     }
 });
+
+
+ $('form.dotpay-form').find('button[type="submit"]').on('click',function(){
+	var checkedbylaw = $('input[name="bylaw"]').is(':checked');
+	if (checkedbylaw) {
+          $('div#dp_opacity').show('fade');
+	}
+ 
+ });
+
+
 
 function performActionOC() {
     setVisibilityOcLogo();

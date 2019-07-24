@@ -362,4 +362,23 @@ input[name=blik_code]:focus::placeholder {
 
 .channels-wrapper .image-container {
 		top: 20px !important;
-	}
+    }
+    
+    #dp_opacity{
+        position:fixed; 
+        top:0; left: 0; 
+        z-index: 9999999; 
+        height: 100%; 
+        width: 100%; 
+        background-color: rgba(0,0,0,0.8);
+        display: none;
+    }
+    
+    .dp_opacity_text {
+        opacity: 1; 
+        text-align:center; 
+        position:relative; 
+        font-size: 2em; 
+        color: white; 
+        top: 45%
+    }    

@@ -657,7 +657,7 @@ class DotpayDevApi extends DotpayApi
                         'url' => $this->parent->getDotUrl(),
                         'urlc' => $this->parent->getDotUrlC(),
                         'api_version' => $this->config->getDotpayApiVersion(),
-                        'type' => 0,
+                        'type' => 4,
                         'ch_lock' => 0,
                         'firstname' => $this->parent->getDotFirstname(),
                         'lastname' => $this->parent->getDotLastname(),
