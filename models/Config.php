@@ -771,7 +771,7 @@ class DotpayConfig
      */
     public function getDotpayAvailableLanguage()
     {
-        return array( 'pl', 'en', 'de', 'it','fr', 'es', 'cz', 'ru', 'hu','cs', 'ro', 'ru', 'uk' );
+        return array( 'pl', 'en', 'de', 'it','fr', 'es', 'cz', 'hu','cs', 'ro', 'ru', 'uk' );
     }
     
     /**
