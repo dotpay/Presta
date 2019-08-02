@@ -248,6 +248,14 @@ abstract class DotpayController extends ModuleFrontController
                                     $customer["order"]["delivery_type"] = $this->getSelectedCarrierMethodGroup();
                                 }
 
+                                $order = new Order(Order::getOrderByCartId($this->context->cart->id));
+
+                                if ($this->getLastOrderNumber() !== null && $order->reference !== null)
+                                {
+                                   $customer["order"]["id"] = $order->reference.'/'.$this->getLastOrderNumber();
+                                }
+
+
                                 $customer_base64 = base64_encode(json_encode($customer, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
 
                             return $customer_base64;

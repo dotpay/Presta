@@ -730,7 +730,7 @@ class dotpay extends PaymentModule
                             )
                         )
                     ),
-/*
+
                     array(
                         'type' => 'switch',
                         'label' => '<span class="dev-option">'.$this->l('PayPo channel enabled').'</span>',
@@ -750,7 +750,7 @@ class dotpay extends PaymentModule
                             )
                         )
                     ),
-*/
+
                     array(
                         'type' => 'switch',
                         'label' => '<span class="dev-option lastInSection">'.$this->l('Blik channel enabled').'</span>',

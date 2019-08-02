@@ -211,7 +211,8 @@ class DotpayDevApi extends DotpayApi
             );
         }
 //PayPo
-        if ($this->config->isDotpayPayPo() && $this->getChannelData(self::$paypoChannel) && $this->parent->isMainChannelEnabled() && ( (float)$this->parent->getDotAmount() >= self::$paypoChannelamountmin ) && ( (float)$this->parent->getDotAmount() >= self::$paypoChannelamountmax ) && Tools::strtoupper($this->parent->getDotCurrency() == 'PLN') ) {
+        if ($this->config->isDotpayPayPo() && $this->getChannelData(self::$paypoChannel) &&  (float)$this->parent->getDotAmount() >= self::$paypoChannelamountmin && (float)$this->parent->getDotAmount() <= self::$paypoChannelamountmax && Tools::strtoupper($this->parent->getDotCurrency()) == 'PLN') {
+       
             $this->addSeparatedChannel(self::$paypoChannel);
             $channelList['paypo'] = array(
                 'form' => $this->getFormHeader('paypo', $targetUrl),
@@ -491,7 +492,7 @@ class DotpayDevApi extends DotpayApi
         $hiddenFields = $this->getHiddenFields();
 
         $hiddenFields['channel'] = self::$ocChannel;
-        $hiddenFields['ch_lock'] = 1;
+        $hiddenFields['ch_lock'] = 0;
         $hiddenFields['type'] = 4;
         $hiddenFields['bylaw'] = 1;
         $hiddenFields['personal_data'] = 1;
@@ -539,7 +540,7 @@ class DotpayDevApi extends DotpayApi
         $hiddenFields = $this->getHiddenFields();
 
         $hiddenFields['channel'] = self::$pvChannel;
-        $hiddenFields['ch_lock'] = 1;
+        $hiddenFields['ch_lock'] = 0;
         $hiddenFields['type'] = 4;
         $hiddenFields['bylaw'] = 1;
         $hiddenFields['personal_data'] = 1;
@@ -557,7 +558,7 @@ class DotpayDevApi extends DotpayApi
         $hiddenFields = $this->getHiddenFields();
 
         $hiddenFields['channel'] = Tools::getValue('channel');
-        $hiddenFields['ch_lock'] = 1;
+        $hiddenFields['ch_lock'] = 0;
         $hiddenFields['type'] = 4;
         $hiddenFields['bylaw'] = 1;
         $hiddenFields['personal_data'] = 1;
@@ -574,7 +575,7 @@ class DotpayDevApi extends DotpayApi
         $hiddenFields = $this->getHiddenFields();
 
         $hiddenFields['channel'] = self::$mpChannel;
-        $hiddenFields['ch_lock'] = 1;
+        $hiddenFields['ch_lock'] = 0;
         $hiddenFields['type'] = 4;
         $hiddenFields['bylaw'] = 1;
         $hiddenFields['personal_data'] = 1;
@@ -591,7 +592,7 @@ class DotpayDevApi extends DotpayApi
         $hiddenFields = $this->getHiddenFields();
 
         $hiddenFields['channel'] = self::$paypoChannel;
-        $hiddenFields['ch_lock'] = 1;
+        $hiddenFields['ch_lock'] = 0;
         $hiddenFields['type'] = 4;
         $hiddenFields['bylaw'] = 1;
         $hiddenFields['personal_data'] = 1;
@@ -609,7 +610,7 @@ class DotpayDevApi extends DotpayApi
 
         if ($this->config->isDotpayWidgetMode()) {
             $hiddenFields['channel'] = Tools::getValue('channel');
-            $hiddenFields['ch_lock'] = 1;
+            $hiddenFields['ch_lock'] = 0;
             $hiddenFields['type'] = 4;
             $hiddenFields['bylaw'] = 1;
             $hiddenFields['personal_data'] = 1;
@@ -630,7 +631,7 @@ class DotpayDevApi extends DotpayApi
             $hiddenFields['blik_code'] = Tools::getValue('blik_code');
         }
         $hiddenFields['channel'] = self::$blikChannel;
-        $hiddenFields['ch_lock'] = 1;
+        $hiddenFields['ch_lock'] = 0;
         $hiddenFields['type'] = 4;
         $hiddenFields['bylaw'] = 1;
         $hiddenFields['personal_data'] = 1;
