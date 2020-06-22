@@ -520,8 +520,25 @@ abstract class DotpayController extends ModuleFrontController
      */
     public function getDotCurrency()
     {
-        $currency = Currency::getCurrency($this->context->cart->id_currency);
-        return $currency["iso_code"];
+        global $cookie;
+        $currency1 = Currency::getCurrency($this->context->cart->id_currency);
+        $currency2 = trim(strtoupper($currency1["iso_code"]));
+
+        $currency3 = new CurrencyCore($cookie->id_currency);
+        $my_currency_iso_code = $currency3->iso_code;
+
+        if (preg_match('/^[A-Z]{3}$/', $currency2)) {
+
+           $currency_card = $currency2;
+
+        } else if (preg_match('/^[A-Z]{3}$/', $my_currency_iso_code)) {
+
+            $currency_card = $my_currency_iso_code;
+        } else {
+            $currency_card = "EMPTY";
+        }
+
+        return $currency_card;
     }
 
     /**
@@ -530,8 +547,23 @@ abstract class DotpayController extends ModuleFrontController
      */
     public function getDotCurrencyId()
     {
-        $currency = Currency::getCurrency($this->context->cart->id_currency);
-        return $currency["id_currency"];
+        global $cookie;
+        $currency1 = Currency::getCurrency($this->context->cart->id_currency);
+        $currency2 = $currency1["id_currency"];
+
+        $currencyid1 = new CurrencyCore($cookie->id_currency);
+        $my_currency_id = $currencyid1->id;
+
+        if (preg_match('/^[A-Z]{3}$/', $currency2)) {
+
+            $currency_id = $currency2;
+ 
+         } else if (preg_match('/^[A-Z]{3}$/', $my_currency_id)) {
+ 
+             $currency_id = $my_currency_id;
+         } else {
+             $currency_id = "0";
+         }
     }
 
     /**

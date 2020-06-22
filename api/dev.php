@@ -668,7 +668,8 @@ class DotpayDevApi extends DotpayApi
                         'street_n1' => $streetData['street_n1'],
                         'city' => $this->parent->getDotCity(),
                         'postcode' => $this->parent->getDotPostcode(),
-                        'country' => $this->parent->getDotCountry(),                       
+                        'country' => $this->parent->getDotCountry(), 
+                        'ignore_last_payment_channel' => 1,               
                         );
         
         // for postponed payment channel                
