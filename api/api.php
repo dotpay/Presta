@@ -78,7 +78,7 @@ abstract class DotpayApi
      *
      * @var int Maximum amount for PayPo channel
      */
-    public static $paypoChannelamountmax = 1000;
+    public static $paypoChannelamountmax = 2000;
 
 
 
@@ -330,7 +330,7 @@ abstract class DotpayApi
     {
         $byLawAgreements = $this->getAgreements('bylaw');
         if (trim($byLawAgreements) == '') {
-            $byLawAgreements = 'I accept Dotpay sp. z o.o. <a title="regulations of payments" target="_blank" href="https://ssl.dotpay.pl/t2/cloudfs1/magellan_media/regulations_of_payments">Regulations of Payments</a>.';
+            $byLawAgreements = 'I accept PayPro S.A. <a title="regulations of payments" target="_blank" href="https://ssl.dotpay.pl/t2/cloudfs1/magellan_media/regulations_of_payments">Regulations of Payments</a>.';
         }
         return $byLawAgreements;
     }
@@ -343,7 +343,7 @@ abstract class DotpayApi
     {
         $personalDataAgreements = $this->getAgreements('personal_data');
         if (trim($personalDataAgreements) == '') {
-            $personalDataAgreements = 'I acknowledge that in order to implement the payment process the Administrator of mine personal data is Dotpay sp. z o.o. (KRS 0000296790), 30-552 Kraków (Poland), Wielicka 28B, +48126882600, <a href="mailto:bok@dotpay.pl">bok@dotpay.pl</a>, see <a title="regulations of payments" target="_blank" href="https://ssl.dotpay.pl/t2/cloudfs1/magellan_media/rodo_en">the full text of the information clause</a>.';
+            $personalDataAgreements = 'I acknowledge that in order to implement the payment process the Administrator of my personal data is PayPro S.A. (KRS 0000347935), 60-327 Poznań (Poland), Kanclerska 15, +48616006170, <a href="mailto:bok@dotpay.pl">bok@dotpay.pl</a>, see <a title="regulations of payments" target="_blank" href="https://ssl.dotpay.pl/t2/cloudfs1/magellan_media/rodo_en">the full text of the information clause</a>.';
         }
         return $personalDataAgreements;
     }
@@ -400,7 +400,7 @@ abstract class DotpayApi
         
         $dotpayLang = $this->parent->getDotLang();
         
-        $curlUrl = "{$dotpayUrl}payment_api/channels/";
+        $curlUrl = "{$dotpayUrl}payment_api/v1/channels/";
         $curlUrl .= "?currency={$paymentCurrency}";
         $curlUrl .= "&id={$dotpayId}";
         $curlUrl .= "&amount={$orderAmount}";
@@ -455,7 +455,8 @@ abstract class DotpayApi
             'required' => true
         );
     }
-    
+
+
     /**
      * Adds field with Personal data agreement of Dotpay to form
      * @return array

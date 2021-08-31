@@ -2,7 +2,7 @@
 <module>
 	<name>dotpay</name>
 	<displayName><![CDATA[Dotpay]]></displayName>
-	<version><![CDATA[2.4.4]]></version>
+	<version><![CDATA[2.5.0]]></version>
 	<description><![CDATA[Szybkie i bezpieczne płatności]]></description>
 	<author><![CDATA[tech@dotpay.pl]]></author>
 	<tab><![CDATA[payments_gateways]]></tab>

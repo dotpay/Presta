@@ -30,6 +30,27 @@ require_once(DOTPAY_PLUGIN_DIR.'/classes/Checksum.php');
 class dotpaycallbackModuleFrontController extends DotpayController
 {
    
+    
+    
+    /**
+     * Returns if the given ip is on the given whitelist.
+    *
+    * @param string $ip        The ip to check.
+    * @param array  $whitelist The ip whitelist. An array of strings.
+    *
+    * @return bool
+    */
+    public function isAllowedIp($ip, array $whitelist)
+    {
+        $ip = (string)$ip;
+        if (in_array($ip, $whitelist, true)) {
+            return true;
+        }
+
+        return false;
+    }
+    
+    
     /**
      * Confirm payment based on Dotpay URLC
      */
@@ -38,7 +59,13 @@ class dotpaycallbackModuleFrontController extends DotpayController
         /**
         * Check external IP address method
         */
-        $CHECK_IP = $this->getClientIp();
+
+        if( (int)$this->config->getDotpayNonProxy() == 1) {
+            $CHECK_IP = $_SERVER['REMOTE_ADDR'];
+        }else{
+            $CHECK_IP = $this->getClientIp();
+        }
+
 
         $sellerApiCallback = new DotpaySellerApi($this->config->getDotpaySellerApiUrl());
         if ($CHECK_IP == $this->config->getOfficeIp() && getenv('REQUEST_METHOD') == 'GET') {
@@ -57,6 +84,7 @@ class dotpaycallbackModuleFrontController extends DotpayController
                 "PIN Correct: ".var_export($sellerApiCallback->isSellerPinOk($this->config->getDotpayApiUsername(), $this->config->getDotpayApiPassword(), $this->config->getDotpayApiVersion(), $this->config->getDotpayId(), $this->config->getDotpayPIN()), true)."<br>".
                 "API Version: ".$this->config->getDotpayApiVersion()."<br>".
                 "Test Mode: ".(int)$this->config->isDotpayTestMode()."<br>".
+                "Server does not use a proxy: ".(int)$this->config->getDotpayNonProxy()."<br>".
                 "Widget: ".(int)$this->config->isDotpayWidgetMode()."<br>".
                 "Postponed Payments: ".(int)$this->config->isDotpayPostponedPayment()."<br>".
                 "Widget: Channels Name: ".(int)$this->config->isDotpayWidgetChannelsName()."<br>".
@@ -91,9 +119,11 @@ class dotpaycallbackModuleFrontController extends DotpayController
                 (Tools::getValue('files')?"Files:<br>".DotpayChecksum::getFileList(mydirname(__DIR__, 3), '<br>', $ext):'')
             );
         }
-        if (!($CHECK_IP == $this->config->getDotpayIp()))
+
+
+        if (!( $this->isAllowedIp($CHECK_IP,$this->config->getDotpayIp()) ))
          {
-            die("PrestaShop - UNEXPECTED IP: <br> - REMOTE ADDRESS: ".$this->getClientIp('checkip'));
+            die("PrestaShop - UNEXPECTED IP: <br> - REMOTE ADDRESS: ".$this->getClientIp('checkip').'/'.$_SERVER['REMOTE_ADDR']);
          }
 
         if (getenv('REQUEST_METHOD') != 'POST') {

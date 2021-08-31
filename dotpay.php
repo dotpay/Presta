@@ -30,7 +30,7 @@ define('DOTPAY_PLUGIN_DIR', _PS_ROOT_DIR_.'/modules/'.DOTPAY_MODULE_NAME);
 
 require_once(DOTPAY_PLUGIN_DIR.'/DotpayFormHelper.php');
 require_once(DOTPAY_PLUGIN_DIR.'/models/Config.php');
-require_once(DOTPAY_PLUGIN_DIR.'/api/dev.php');
+require_once(DOTPAY_PLUGIN_DIR.'/api/next.php');
 require_once(DOTPAY_PLUGIN_DIR.'/api/legacy.php');
 require_once(DOTPAY_PLUGIN_DIR.'/controllers/front/payment.php');
 require_once(DOTPAY_PLUGIN_DIR.'/models/Instruction.php');
@@ -76,7 +76,7 @@ class dotpay extends PaymentModule
     {
         $this->name = 'dotpay';
         $this->tab = 'payments_gateways';
-        $this->version = '2.4.4';
+        $this->version = '2.5.0';
         $this->author = 'tech@dotpay.pl';
         $this->ps_versions_compliancy = array('min' => '1.6', 'max' => '1.6.9');
         $this->bootstrap = true;
@@ -102,7 +102,7 @@ class dotpay extends PaymentModule
         if ($this->config->getDotpayApiVersion()=='legacy') {
             $this->api = new DotpayLegacyApi();
         } else {
-            $this->api = new DotpayDevApi();
+            $this->api = new DotpayNextApi();
         }
     }
 
@@ -504,8 +504,8 @@ class dotpay extends PaymentModule
     {
         $optionsApi = array(
             array(
-              'id_option2' => 'dev',
-              'name2' => $this->l('dev (ID has 6 digits)')
+              'id_option2' => 'next',
+              'name2' => $this->l('next (ID has 6 digits)')
             ),
             array(
               'id_option2' => 'legacy',
@@ -544,7 +544,7 @@ class dotpay extends PaymentModule
                         'class' => 'fixed-width-xxl',
                         'label' => $this->l('Select used Dotpay API version'),
                         'name' => $this->config->getDotpayApiVersionFN(),
-                        'desc' => '<b>'.$this->l('dev is recommended').'</b><br /><span id="message-for-old-version">'.$this->l('Please contact the Customer Care to improve your API version to dev').':&nbsp;<a href="'.$this->l('https://ssl.dotpay.pl/en/customer_care').'" target="_blank"><b>'.$this->l('Contact').'</b></a></span>',
+                        'desc' => '<b>'.$this->l('next is recommended').'</b><br /><span id="message-for-old-version">'.$this->l('Please contact the Customer Care to improve your API version to next').':&nbsp;<a href="'.$this->l('https://www.dotpay.pl/kontakt').'" target="_blank"><b>'.$this->l('Contact').'</b></a></span>',
                         'required' => true,
                         'class' => 'api-select',
                         'options' => array(
@@ -577,10 +577,10 @@ class dotpay extends PaymentModule
                     ),
                     array(
                         'type' => 'switch',
-                        'label' => '<span class="dev-option">'.$this->l('Test mode').'</span>',
+                        'label' => '<span class="next-option">'.$this->l('Test mode').'</span>',
                         'name' => $this->config->getDotpayTestModeFN(),
                         'is_bool' => true,
-                        'class' => 'dev-option',
+                        'class' => 'next-option',
                         'desc' => $this->l('I\'m using Dotpay test account (test ID)').'<br><b>'.$this->l('Required Dotpay test account:').' <a href="https://ssl.dotpay.pl/test_seller/test/registration/?affilate_id=prestashop_module" target="_blank" title="'.$this->l('Dotpay test account registration').'">'.$this->l('registration').'</b></a>',
                         'values' => array(
                             array(
@@ -596,8 +596,29 @@ class dotpay extends PaymentModule
                         )
                     ),
                     array(
+                        'type' => 'radio',
+                        'label' => '<span class="next-option">💻 '.$this->l('My server does not use a proxy').'</span>',
+                        'name' => $this->config->getDotpayNonProxyFN(),
+                        'is_bool' => true,
+                        'class' => 'next-option',
+                        'required'  => true,   
+                        'desc' => $this->l('By default, we recommend that you set it on (no proxy).').'<br>'.$this->l('If you are sure otherwise or you have problems receiving confirmations about the completed payment - set it to off.'),
+                        'values' => array(
+                            array(
+                                'id' => 'proxy_active_on',
+                                'value' => true,
+                                'label' => $this->l('Enable')
+                            ),
+                            array(
+                                'id' => 'proxy_active_off',
+                                'value' => false,
+                                'label' => $this->l('Disable')
+                            )
+                        )
+                    ),
+                    array(
                         'type' => 'switch',
-                        'label' => '<span class="dev-option">'.$this->l('Dotpay widget enabled').'</span>',
+                        'label' => '<span class="next-option">'.$this->l('Dotpay widget enabled').'</span>',
                         'name' => $this->config->getDotpayWidgetModeFN(),
                         'is_bool' => true,
                         'desc' => $this->l('Enable Dotpay widget on shop site').'<br><b>'.$this->l('Disable this feature if you are using modules modifying checkout page').'</b>',
@@ -620,7 +641,7 @@ class dotpay extends PaymentModule
                         'label' => '<span class="">'.$this->l('Use the additional features necessary for postponed payments').'</span>',
                         'name' => $this->config->getDotpayPostponedPaymentFN(),
                         'is_bool' => true,
-                        'class' => 'dev-option postponed-enable-option',
+                        'class' => 'next-option postponed-enable-option',
                         'hint' => $this->l('Enable if you want to use channels offering postponed payments.'),
                         'desc' => '<b>'.$this->l('The function is necessary if you have an active additional payment channel for postponed payments on your Dotpay account.').'</b><br>'.$this->l('Additional payment information such as: delivery address, date of account activation in the store or the number of previous orders can be sent to the payment operator.'),
                         'values' => array(
@@ -639,7 +660,7 @@ class dotpay extends PaymentModule
 
                     array(
                         'type' => 'radio',
-                        'label' => '<i class="icon-AdminTools" style="color: #10279b;"></i> <span class="dev-option advanced-mode-switch dotpayadvsett">'.$this->l('Advanced Mode').'</span>',
+                        'label' => '<i class="icon-AdminTools" style="color: #10279b;"></i> <span class="next-option advanced-mode-switch dotpayadvsett">'.$this->l('Advanced Mode').'</span>',
                         'name' => $this->config->getDotpayAdvancedModeFN(),
                         'is_bool' => true,
                         'desc' => $this->l('Show advanced plugin settings'),
@@ -660,7 +681,7 @@ class dotpay extends PaymentModule
                         'type' => 'radio',
                         'label' => $this->l('Renew payment enabled'),
                         'is_bool' => true,
-                        'class' => 'dev-option renew-enable-option',
+                        'class' => 'next-option renew-enable-option',
 						'desc' => $this->l('Logged in clients can resume interrupted payments').'<br><b>'.$this->l('Warning! Renewed order amount will be the same as during first payment attempt').'<br>'.$this->l('(changes in product prices will not be taken into account)').'</b>',
 						'name' => $this->config->getDotpayRenewFN(),
                         'values' => array(
@@ -679,14 +700,14 @@ class dotpay extends PaymentModule
                     array(
                         'type' => 'text',
                         'name' => $this->config->getDotpayRenewDaysFN(),
-						'label' => '<span class="dev-option renew-option">'.$this->l('Number of days to renew payments').'</span>',
+						'label' => '<span class="next-option renew-option">'.$this->l('Number of days to renew payments').'</span>',
                         'size' => 6,
                         'class' => 'fixed-width-sm',
 						'desc' => $this->l('Enter for how many days customers will be able to renew their payments').'<br><b>'.$this->l('Leave blank if payment renew should not be restricted by time').'</b>',
                     ),
                     array(
                         'type' => 'text',
-                        'label' => '<span class="dev-option lastInSection">'.$this->l('Currencies for which main channel is disabled').'</span>',
+                        'label' => '<span class="next-option lastInSection">'.$this->l('Currencies for which main channel is disabled').'</span>',
                         'name' => $this->config->getDotpayWidgetDisCurrFN(),
                         'prefix' => '<i class="icon-money" style="color: #407786;"></i>',
                         'class' => 'fixed-width-xxl',
@@ -694,7 +715,7 @@ class dotpay extends PaymentModule
                     ),
                     array(
                         'type' => 'switch',
-                        'label' => '<span class="dev-option">'.$this->l('Credit card channel enabled').'</span>',
+                        'label' => '<span class="next-option">'.$this->l('Credit card channel enabled').'</span>',
                         'name' => $this->config->getDotpayCreditCardFN(),
                         'is_bool' => true,
                         'desc' => $this->l('Enable payment cards as separate channel'),
@@ -713,7 +734,7 @@ class dotpay extends PaymentModule
                     ),
                     array(
                         'type' => 'switch',
-                        'label' => '<span class="dev-option">'.$this->l('MasterPass channel enabled').'</span>',
+                        'label' => '<span class="next-option">'.$this->l('MasterPass channel enabled').'</span>',
                         'name' => $this->config->getDotpayMasterPassFN(),
                         'is_bool' => true,
                         'desc' => $this->l('Enable MasterPass as separate channel'),
@@ -733,7 +754,7 @@ class dotpay extends PaymentModule
 
                     array(
                         'type' => 'switch',
-                        'label' => '<span class="dev-option">'.$this->l('PayPo channel enabled').'</span>',
+                        'label' => '<span class="next-option">'.$this->l('PayPo channel enabled').'</span>',
                         'name' => $this->config->getDotpayPayPoFN(),
                         'is_bool' => true,
                         'desc' => '<strong>'.$this->l('Enable PayPo as separate channel').'</strong><br>'.$this->l('Additional contract required before including this channel'),
@@ -753,7 +774,7 @@ class dotpay extends PaymentModule
 
                     array(
                         'type' => 'switch',
-                        'label' => '<span class="dev-option lastInSection">'.$this->l('Blik channel enabled').'</span>',
+                        'label' => '<span class="next-option lastInSection">'.$this->l('Blik channel enabled').'</span>',
                         'name' => $this->config->getDotpayBlikFN(),
                         'is_bool' => true,
                         'desc' => $this->l('Enable Blik as separate channel').'<br><b>'.$this->l('Available only for PLN').'</b>',
@@ -772,7 +793,7 @@ class dotpay extends PaymentModule
                     ),
                     array(
                         'type' => 'switch',
-                        'label' => '<span class="dev-option">'.$this->l('OneClick channel enabled').'</span>',
+                        'label' => '<span class="next-option">'.$this->l('OneClick channel enabled').'</span>',
                         'name' => $this->config->getDotpayOneClickFN(),
                         'is_bool' => true,
                         'desc' => $this->l('Enable payments with one click for credit card channel (248)').'<br><b>'.$this->l('Contact Dotpay customer service before using this option').' <a href="http://www.dotpay.pl/kontakt/biuro-obslugi-klienta/" target="_blank" title="'.$this->l('Dotpay customer service').'">'.$this->l('Contact').'</a><br>'.$this->l('Requires Dotpay API username and password (enter below).').'</b>',
@@ -791,7 +812,7 @@ class dotpay extends PaymentModule
                     ),
                     array(
                         'type' => 'switch',
-                        'label' => '<span class="dev-option">'.$this->l('Refund payment enabled')."</span>",
+                        'label' => '<span class="next-option">'.$this->l('Refund payment enabled')."</span>",
                         'name' => $this->config->getDotpayRefundFN(),
                         'is_bool' => true,
                         'desc' => $this->l('Enable sending payments refund requests directly from your shop').'<br><b>'.$this->l('Contact Dotpay customer service before using this option').' <a href="http://www.dotpay.pl/kontakt/biuro-obslugi-klienta/" target="_blank" title="'.$this->l('Dotpay customer service').'">'.$this->l('Contact').'</a><br>'.$this->l('Requires Dotpay API username and password (enter below).').'</b>',
@@ -810,7 +831,7 @@ class dotpay extends PaymentModule
                     ),
                     array(
                         'type' => 'switch',
-                        'label' => '<span class="dev-option">'.$this->l('Payment instructions on shop site')."</span>",
+                        'label' => '<span class="next-option">'.$this->l('Payment instructions on shop site')."</span>",
                         'name' => $this->config->getDotpayDispInstructionFN(),
                         'is_bool' => true,
                         'desc' => $this->l('Display transfer payment instructions without redirecting to Dotpay site').'<br><b>'.$this->l('Contact Dotpay customer service before using this option').' <a href="http://www.dotpay.pl/kontakt/biuro-obslugi-klienta/" target="_blank" title="'.$this->l('Dotpay customer service').'">'.$this->l('Contact').'</a><br>'.$this->l('Requires Dotpay API username and password (enter below).').'</b>',
@@ -831,7 +852,7 @@ class dotpay extends PaymentModule
                         'type' => 'text',
                         'name' => 'API_DATA_DESC',
                         'label' => $this->l('API DATA (optional)'),
-                        'class' => 'hidden dev-option',
+                        'class' => 'hidden next-option',
                         'desc' => '<span style="font-style: normal; color: #555;">'.$this->l('Required for One Click, Payment Refund and displaying instructions for Transfer channels on shops website').'<br><b>'.$this->l('If none of those functions are used, leave fields below blank').'</b></span>',
                     ),
                     array(
@@ -839,7 +860,7 @@ class dotpay extends PaymentModule
                         'name' => $this->config->getDotpayApiUsernameFN(),
                         'prefix' => '<i class="icon-male" style="color: #9b6610;"></i>',
                         'label' => $this->l('Dotpay API username'),
-                        'class' => 'fixed-width-xxl dev-option',
+                        'class' => 'fixed-width-xxl next-option',
                         'desc' => $this->l('Your username for Dotpay user panel')
                     ),
                     array(
@@ -847,7 +868,7 @@ class dotpay extends PaymentModule
                         'name' => $this->config->getDotpayApiPasswordFN(),
                         'prefix' => '<i class="icon-key" style="color: #9b6610;"></i>',
                         'label' => $this->l('Dotpay API password'),
-                        'class' => 'fixed-width-xxl dev-option password-field lastInSection',
+                        'class' => 'fixed-width-xxl next-option password-field lastInSection',
                         'desc' => $this->l('Your password for Dotpay user panel'),
                     ),
 
@@ -856,7 +877,7 @@ class dotpay extends PaymentModule
                         'label' => $this->l('I have separate ID for foreign currencies'),
                         'name' => $this->config->getDotpayPVFN(),
                         'is_bool' => true,
-                        'class' => 'dev-option pv-enable-option',
+                        'class' => 'next-option pv-enable-option',
                         'desc' => $this->l('Enable separate payment channel for foreign currencies'),
                         'values' => array(
                             array(
@@ -878,7 +899,7 @@ class dotpay extends PaymentModule
                         'prefix' => '<i style="font-weight: bold; color: #407786; font-size: 1.4em;">&#35;</i>',
                         'size' => 6,
                         'maxlength' => 6,
-                        'class' => 'fixed-width-sm dev-option pv-option',
+                        'class' => 'fixed-width-sm next-option pv-option',
                         'desc' => $this->l('Copy only number (without "#" char) from the Dotpay user panel.').' <div id="infoID" /></div>',
                         'required' => true
                     ),
@@ -887,7 +908,7 @@ class dotpay extends PaymentModule
                         'name' => $this->config->getDotpayPvPINFN(),
                         'label' => $this->l('PIN for foreign currencies account'),
                         'prefix' => '<i class="icon-key" style="color: #407786;"></i>',
-                        'class' => 'fixed-width-xxl dev-option pv-option',
+                        'class' => 'fixed-width-xxl next-option pv-option',
                         'maxlength' => 32,
                         'desc' => $this->l('Copy from Dotpay user panel').' <div id="infoPIN" /></div>',
                         'required' => true
@@ -897,7 +918,7 @@ class dotpay extends PaymentModule
                         'name' => $this->config->getDotpayPvCurrenciesFN(),
                         'label' => $this->l('Currencies used by foreign currencies account'),
                         'prefix' => '<i class="icon-money" style="color: #407786;"></i>',
-                        'class' => 'fixed-width-xxl dev-option pv-option lastInSection',
+                        'class' => 'fixed-width-xxl next-option pv-option lastInSection',
                         'desc' => $this->l('Enter currency codes separated by commas, for example: EUR,USD,GBP').'<br><b>'.$this->l('It is recommended to hide main channel for entered currencies').'</b>',
                     ),
 
@@ -906,7 +927,7 @@ class dotpay extends PaymentModule
                         'label' => $this->l('Extracharge options'),
                         'name' => $this->config->getDotpayExChFN(),
                         'is_bool' => true,
-                        'class' => 'dev-option excharge-enable-option',
+                        'class' => 'next-option excharge-enable-option',
                         'desc' => $this->l('Enable extra fee for Dotpay payment method').'<br><b>'.$this->l('Enabling this option will add required "Online payment - DOTPAYFEE" to your products').'</b>',
                         'values' => array(
                             array(
@@ -925,14 +946,14 @@ class dotpay extends PaymentModule
                         'type' => 'text',
                         'name' => $this->config->getDotpayExAmountFN(),
                         'label' => $this->l('Increase amount of order'),
-                        'class' => 'fixed-width-lg dev-option exch-option',
+                        'class' => 'fixed-width-lg next-option exch-option',
                         'desc' => $this->l('Value of additional fee for given currency (eg. 5.23)')
                     ),
                     array(
                         'type' => 'text',
                         'name' => $this->config->getDotpayExPercentageFN(),
                         'label' => $this->l('Increase amount of order (in %)'),
-                        'class' => 'fixed-width-lg dev-option exch-option lastInSection',
+                        'class' => 'fixed-width-lg next-option exch-option lastInSection',
                         'desc' => $this->l('Value of additional fee for given currency in % (eg. 1.90)').'<br><b>'.$this->l('Bigger amount will be chosen').'</b>',
                     ),
 
@@ -941,7 +962,7 @@ class dotpay extends PaymentModule
                         'label' => $this->l('Discount options'),
                         'name' => $this->config->getDotpayDiscountFN(),
                         'is_bool' => true,
-                        'class' => 'dev-option discount-enable-option',
+                        'class' => 'next-option discount-enable-option',
                         'desc' => $this->l('Enable discount for Dotpay payment method'),
                         'values' => array(
                             array(
@@ -960,14 +981,14 @@ class dotpay extends PaymentModule
                         'type' => 'text',
                         'name' => $this->config->getDotpayDiscAmountFN(),
                         'label' => $this->l('Reduce amount of order'),
-                        'class' => 'fixed-width-lg dev-option discount-option',
+                        'class' => 'fixed-width-lg next-option discount-option',
                         'desc' => $this->l('Value of discount amount (in current price)')
                     ),
                     array(
                         'type' => 'text',
                         'name' => $this->config->getDotpayDiscPercentageFN(),
                         'label' => $this->l('Reduce amount of order (in %)'),
-                        'class' => 'fixed-width-lg dev-option discount-option',
+                        'class' => 'fixed-width-lg next-option discount-option',
                         'desc' => $this->l('Value of discount for given currency in % (eg. 1.90)').'<br><b>'.$this->l('Bigger amount will be chosen').'</b>',
                     ),
 
@@ -1057,6 +1078,7 @@ class dotpay extends PaymentModule
             $this->config->getDotpayPayPoFN() => $this->config->isDotpayPaypo(),
             $this->config->getDotpayWidgetDisCurrFN() => $this->config->getDotpayWidgetDisCurr(),
             $this->config->getDotpayTestModeFN() => $this->config->isDotpayTestMode(),
+            $this->config->getDotpayNonProxyFN() => $this->config->getDotpayNonProxy(),
             $this->config->getDotpayPVFN() => $this->config->isDotpayPV(),
             $this->config->getDotpayPvIdFN() => $this->config->getDotpayPvId(),
             $this->config->getDotpayPvPINFN() => $this->config->getDotpayPvPIN(),
@@ -1422,7 +1444,7 @@ class dotpay extends PaymentModule
     private function setDefaultConfig()
     {
         $this->config->setDotpayEnabled(false)
-                     ->setDotpayApiVersion('dev')
+                     ->setDotpayApiVersion('next')
                      ->setDotpayId('')
                      ->setDotpayPIN('')
                      ->setDotpayRenew(true)
@@ -1430,6 +1452,7 @@ class dotpay extends PaymentModule
                      ->setDotpayRefund(false)
                      ->setDotpayDispInstruction(false)
                      ->setDotpayTestMode(false)
+                     ->setDotpayNonProxy('1')
                      ->setDotpayPostponedPayment(false)
                      ->setDotpayAdvancedMode(false)
                      ->setDotpayBlik(false)

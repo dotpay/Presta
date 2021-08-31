@@ -23,24 +23,6 @@
 *
 *}
 
-{if $regMessEn}
-<div class="panel"><div class="dotpay-offer">
-    <h3>{l s='Registration' mod='dotpay'}</h3>
-    <p>{l s='In response to the market\'s needs Dotpay has been delivering innovative Internet payment services providing the widest e-commerce solution offer for years. The domain is money transfers between a buyer and a merchant within a complex service based on counselling and additional security. Within an offer of Internet payments Dotpay offers over 140 payment channels including: mobile payments, instalments, cash, e-wallets, transfers and credit card payments.' mod='dotpay'}</p>
-    <p>{l s='To all new clients who have filled in a form and wish to accept payments we offer promotional conditions:' mod='dotpay'}</p>
-    <ul>
-        <li><b>1,9%</b> {l s='commission on Internet payments (not less than PLN 0.30) ' mod='dotpay'}</li>
-        <li>{l s='instalment payments' mod='dotpay'} <b>{l s='without any commission!' mod='dotpay'}</b></li>
-        <li>{l s='an activation fee - only PLN 10' mod='dotpay'}</li>
-        <li><b>{l s='without any additional fees' mod='dotpay'}</b> {l s='for refunds and withdrawals!' mod='dotpay'}</li>
-    </ul>
-    <p>{l s='In short, minimizing effort and work time you will increase your sales possibilities. Do not hesitate and start your account now!' mod='dotpay'}</p>
-    <div class="cta-button-container">
-        <a href="http://www.dotpay.pl/prestashop/" class="cta-button">{l s='Register now!' mod='dotpay'}</a>
-    </div>
-</div></div>
-{/if}
-
 <div class="panel">
     <div class="dotpay-config">
         <h3>{l s='Inforation' mod='dotpay'}</h3>
@@ -176,15 +158,15 @@
 
     function setFieldsForApi() {
         var apiVersion = $('.api-select').val();
-        badID = (apiVersion=='dev')?badNewID:badOldID;
-        badPin = (apiVersion=='dev')?badNewPIN:badOldPIN;
+        badID = (apiVersion=='next')?badNewID:badOldID;
+        badPin = (apiVersion=='next')?badNewPIN:badOldPIN;
         if(apiVersion=='legacy') {
-            $('.dev-option').parents('.form-group').hide().next('hr').hide();
+            $('.next-option').parents('.form-group').hide().next('hr').hide();
             $('.legacy-option').parents('.form-group').show().next('hr').show();
             $('#message-for-old-version').show();
         } else {
             $('.legacy-option').parents('.form-group').hide().next('hr').hide();
-            $('.dev-option').parents('.form-group').show().next('hr').show();
+            $('.next-option').parents('.form-group').show().next('hr').show();
             $('#message-for-old-version').hide();
             setFieldsForPostponed();
             setFieldsForRenew();
@@ -271,8 +253,8 @@
         if(empty===true && idLength === 0) {
             return 0;
         }
-        if((idLength!=6&&$('#DP_API_VERSION').val()=='dev')||
-           ((idLength!=5&&idLength!=4)&&$('#DP_API_VERSION').val()=='legacy') ||
+        if((idLength !=6 && $('#DP_API_VERSION').val() == 'next')||
+           ((idLength !=5 && idLength !=4) && $('#DP_API_VERSION').val() == 'legacy') ||
            (isNaN(idElem.val() % 1))
         ) {
             setError(idElem, badID);
@@ -288,8 +270,8 @@
         if(empty===true && pinLength === 0) {
             return true;
         }
-        if(($('#DP_API_VERSION').val()=='dev' && (pinLength>32 || pinLength<16)) ||
-           ($('#DP_API_VERSION').val()=='legacy' && (pinLength!=16 && pinLength!=0))){
+        if(($('#DP_API_VERSION').val()=='next' && (pinLength>32 || pinLength < 16)) ||
+           ($('#DP_API_VERSION').val()=='legacy' && (pinLength != 16 && pinLength !=0 ))){
             setError(pinElem, badPin);
             return 1;
         } else {
@@ -340,7 +322,7 @@ function selectValidationPostponed() {
         check += validatePin($('#DP_USER_PIN'));
         check += validatePostponened();
 
-        if($('#DP_API_VERSION').val()=='dev') {
+        if($('#DP_API_VERSION').val()=='next') {
             if($('.pv-enable-option input[name="DP_PV_MODE"]:checked').val()=='1') {
                 check += validateId($('#DP_PV_ID'), check);
                 check += validatePin($('#DP_PV_PIN'), check);

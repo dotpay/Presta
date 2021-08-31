@@ -177,9 +177,12 @@ class DotpaySellerApi
              ->addOption(CURLOPT_TIMEOUT, 100)
              ->addOption(CURLOPT_HTTPHEADER, array(
                 'Accept: application/json; indent=4',
-                'content-type: application/json'));
+                'content-type: application/json',
+                'User-Agent: DotpayModule_v2.5.0 Prestashop 1.6 - refund'));
         $resp = Tools::jsonDecode($curl->exec(), true);
-        return $curl->getInfo()+$resp;
+        
+        return ($curl->getInfo() + $resp);
+
     }
     
     /**
@@ -188,7 +191,7 @@ class DotpaySellerApi
      */
     private function getDotPaymentApi()
     {
-        return "api/";
+        return "api/v1/";
     }
 
     /**

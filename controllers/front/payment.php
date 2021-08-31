@@ -73,7 +73,7 @@ class dotpaypaymentModuleFrontController extends DotpayController
             'targetUrl' => $target,
             'meta_title' => $this->module->l('Dotpay online payment'),
             'channelList' => $channelList,
-            'isWidget' => (bool)($this->config->isDotpayWidgetMode()&&$this->config->getDotpayApiVersion()=='dev'),
+            'isWidget' => (bool)($this->config->isDotpayWidgetMode()&&$this->config->getDotpayApiVersion()=='next'),
             'userId' => $this->config->getDotpayId(),
             'currencyPay' => $this->getDotCurrency(),
             'amount' => $this->getDotAmount(),
@@ -92,6 +92,7 @@ class dotpaypaymentModuleFrontController extends DotpayController
             'directPayment' => (int)!$this->config->isDotpayWidgetMode(),
 			'getinfoaboutTest' => $this->api->getinfoaboutTest(),
             'testMessage' => $this->module->l('The payment module is in test mode. All payment information is fake. Order will not be processed!'),
+            'blikMessage' => $this->module->l('Generate a BLIK code in your bank\'s app and enter this below:'),
         );
     }
 }

@@ -92,17 +92,17 @@ class DotpayInstruction extends ObjectModel
     /**
      * Name of payment recipient
      */
-    const DOTPAY_NAME = 'Dotpay sp. z o.o.';
+    const DOTPAY_NAME = 'PayPro S.A.';
     
     /**
      * Street of payment recipient
      */
-    const DOTPAY_STREET = 'Wielicka 28B';
+    const DOTPAY_STREET = 'ul. Kanclerska 15';
     
     /**
      * Post code and city of payment recipient
      */
-    const DOTPAY_CITY = '30-552 Kraków';
+    const DOTPAY_CITY = '60-327 Poznań';
     
     public static $definition = array(
         'table' => 'dotpay_instructions',

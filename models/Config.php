@@ -34,15 +34,15 @@ class DotpayConfig
     
     /**
      *
-     * @var string Dotpay target url for dev api 
+     * @var string Dotpay target url for next api 
      */
-    private static $DOTPAY_TARGET_URL_DEV = 'https://ssl.dotpay.pl/t2/';
+    private static $DOTPAY_TARGET_URL_NEXT = 'https://ssl.dotpay.pl/t2/';
     
     /**
      *
      * @var string Dotpay target url for test payment 
      */
-    private static $DOTPAY_TARGET_URL_TEST_DEV = 'https://ssl.dotpay.pl/test_payment/';
+    private static $DOTPAY_TARGET_URL_TEST_NEXT = 'https://ssl.dotpay.pl/test_payment/';
     
     /**
      *
@@ -65,9 +65,9 @@ class DotpayConfig
         if ($this->getDotpayApiVersion()=='legacy') {
             return self::$DOTPAY_TARGET_URL_LEGACY;
         } elseif ($this->isDotpayTestMode()) {
-            return self::$DOTPAY_TARGET_URL_TEST_DEV;
+            return self::$DOTPAY_TARGET_URL_TEST_NEXT;
         } else {
-            return self::$DOTPAY_TARGET_URL_DEV;
+            return self::$DOTPAY_TARGET_URL_NEXT;
         }
     }
     
@@ -91,7 +91,17 @@ class DotpayConfig
      */
     public function getDotpayIp()
     {
-        return '195.150.9.37';
+        $whitelist = array(
+                            '195.150.9.37',
+                            '91.216.191.181',
+                            '91.216.191.182',
+                            '91.216.191.183',
+                            '91.216.191.184',
+                            '91.216.191.185',
+                            '5.252.202.255',
+                         );
+
+        return $whitelist;
     }
     
     /**
@@ -199,6 +209,23 @@ class DotpayConfig
         return Configuration::get($this->getDotpayTestModeFN());
     }
     
+
+    public function getDotpayNonProxyFN()
+    {
+        return 'DP_NON_PROXY';
+    }
+    public function setDotpayNonProxy($proxy)
+    {
+        Configuration::updateValue($this->getDotpayNonProxyFN(), $proxy);
+        return $this;
+    }
+    public function getDotpayNonProxy()
+    {
+        
+        return Configuration::get($this->getDotpayNonProxyFN());
+    }
+
+
     public function getDotpayIdFN()
     {
         return 'DP_USER_ID';
@@ -771,7 +798,7 @@ class DotpayConfig
      */
     public function getDotpayAvailableLanguage()
     {
-        return array( 'pl', 'en', 'de', 'it','fr', 'es', 'cz', 'hu','cs', 'ro', 'ru', 'uk' );
+        return array( 'pl', 'en', 'de', 'it','fr', 'es', 'cz', 'hu','cs', 'ro', 'ru', 'uk', 'lt', 'lv', 'sk' );
     }
     
     /**

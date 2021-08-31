@@ -146,6 +146,9 @@ $(document).ready(function(){
             checkBlikCode(target);
         });
 
+        $("<p>{/literal}{$blikMessage}{literal}</p>").insertBefore("input[name='blik_code']" );
+        
+
         if(window.dotpayConfig.isWidget == true) {
             $('body').on('click', '.channel-container', function () {
                 $(this).parents('form').find('button[type="submit"]').attr('disabled', false);

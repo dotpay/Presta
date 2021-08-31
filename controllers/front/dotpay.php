@@ -49,7 +49,7 @@ abstract class DotpayController extends ModuleFrontController
     protected $address_deliv;
     /**
      *
-     * @var DotpayApi Api for selected Dotpay payment API (dev or legacy)
+     * @var DotpayApi Api for selected Dotpay payment API (next or legacy)
      */
     protected $api;
 
@@ -82,7 +82,7 @@ abstract class DotpayController extends ModuleFrontController
         if ($this->config->getDotpayApiVersion()=='legacy') {
             $this->api = new DotpayLegacyApi($this);
         } else {
-            $this->api = new DotpayDevApi($this);
+            $this->api = new DotpayNextApi($this);
         }
 
         $this->module->registerFormHelper();
@@ -221,8 +221,7 @@ abstract class DotpayController extends ModuleFrontController
                                  "payer" => array(
                                          "first_name" => $this->NewPersonName($this->getCustomer()->firstname),
                                          "last_name" => $this->NewPersonName($this->getCustomer()->lastname),
-                                         "email" => $this->getDotEmail(),
-                                         "phone" => $this->getDotPhone()
+                                         "email" => $this->getDotEmail()
                                           ),
                                  "order" => array(
                                          "delivery_address" => array(
@@ -236,6 +235,10 @@ abstract class DotpayController extends ModuleFrontController
                                             )
 
                                  );
+
+                                 if ($this->getDotPhone() != "") {
+                                    $customer["payer"]["phone"] = (string)$this->getDotPhone();
+                                }
 
                                  if ($this->getregisteredCustomerDate() != null)
                                  {
@@ -588,7 +591,7 @@ abstract class DotpayController extends ModuleFrontController
 			 }
 
 
-        if ($this->config->getDotpayApiVersion() == 'dev') {
+        if ($this->config->getDotpayApiVersion() == 'next') {
             return ($this->module->l("Order ID:").' '.$order->reference.''.$exAmount_desc.$disAmount_desc);
         } else {
             return ($this->module->l("Your order ID:").' '.$order->reference);
