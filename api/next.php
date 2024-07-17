@@ -99,7 +99,7 @@ class DotpayNextApi extends DotpayApi
                         $this->getSubmitField(),
                     ),
                     'image' => $this->parent->getDotOneClickLogo(),
-                    'description' => "&nbsp;&nbsp;<strong>".$this->parent->module->l("Credit Card - One Click")."</strong>&nbsp;<span>".$this->parent->module->l("(via Dotpay)")."</span>",
+                    'description' => "&nbsp;&nbsp;<strong>".$this->parent->module->l("Credit Card - One Click")."</strong>",
                 );
             } else {
                 $channelList['oneclick'] = array(
@@ -121,7 +121,7 @@ class DotpayNextApi extends DotpayApi
                         )
                     ),
                     'image' => $this->parent->getDotOneClickLogo(),
-                    'description' => "&nbsp;&nbsp;<strong>".$this->parent->module->l("Credit Card - One Click")."</strong>&nbsp;<span>".$this->parent->module->l("(via Dotpay)")."</span>",
+                    'description' => "&nbsp;&nbsp;<strong>".$this->parent->module->l("Credit Card - One Click"),
                 );
             }
         }
@@ -147,7 +147,7 @@ class DotpayNextApi extends DotpayApi
                     $this->getSubmitField(),
                 ),
                 'image' => $this->parent->getDotCreditCardLogo(),
-                'description' => "&nbsp;&nbsp;".$this->parent->module->l("Pay with your credit card")."&nbsp;<span>".$this->parent->module->l("(via Dotpay)")."</span>",
+                'description' => "&nbsp;&nbsp;".$this->parent->module->l("Pay with your credit card"),
             );
         }
 
@@ -164,7 +164,7 @@ class DotpayNextApi extends DotpayApi
                     $this->getSubmitField(),
                 ),
                 'image' => $this->parent->getDotPVLogo(),
-                'description' => "&nbsp;&nbsp;".$this->parent->module->l("Pay with your credit card")."&nbsp;<span>".$this->parent->module->l("(via Dotpay)")."</span>",
+                'description' => "&nbsp;&nbsp;".$this->parent->module->l("Pay with your credit card"),
             );
         }
 
@@ -191,7 +191,7 @@ class DotpayNextApi extends DotpayApi
                     $this->getSubmitField(),
                 ),
                 'image' => $this->parent->getDotBlikLogo(),
-                'description' => "&nbsp;&nbsp;<strong>".$this->parent->module->l("Blik")."</strong>&nbsp;<span>".$this->parent->module->l("(via Dotpay)")."</span>",
+                'description' => "&nbsp;&nbsp;<strong>".$this->parent->module->l("Blik"),
             );
         }
 
@@ -207,7 +207,7 @@ class DotpayNextApi extends DotpayApi
                     $this->getSubmitField(),
                 ),
                 'image' => $this->parent->getDotMasterPassLogo(),
-                'description' => "&nbsp;&nbsp;".$this->parent->module->l("MasterPass")."&nbsp;<span>".$this->parent->module->l("(via Dotpay)")."</span>",
+                'description' => "&nbsp;&nbsp;".$this->parent->module->l("MasterPass"),
             );
         }
 //PayPo
@@ -224,7 +224,7 @@ class DotpayNextApi extends DotpayApi
                     $this->getSubmitField(),
                 ),
                 'image' => $this->parent->getDotPayPoLogo(),
-                'description' => "&nbsp;&nbsp;".$this->parent->module->l("PayPo")."&nbsp;<span>".$this->parent->module->l("(via Dotpay)")."</span>",
+                'description' => "&nbsp;&nbsp;".$this->parent->module->l("PayPo"),
             );
         }
 
@@ -239,7 +239,7 @@ class DotpayNextApi extends DotpayApi
             $channelList['dotpay'] = array(
                 'form' => $this->getFormHeader('dotpay', $targetUrl),
                 'image' => $this->parent->getDotpayLogo(),
-                'description' => "&nbsp;&nbsp;<strong>".$this->parent->module->l(" Dotpay ")."</strong>&nbsp;<span>".$this->parent->module->l("(fast and secure internet payment)")."</span>",
+                'description' => "&nbsp;&nbsp;<strong>".$this->parent->module->l(" Przelewy24 ")."</strong>",
             );
             $fields = array(
                 $this->getHiddenField('dotpay_type', 'dotpay'),

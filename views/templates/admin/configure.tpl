@@ -26,7 +26,9 @@
 <div class="panel">
     <div class="dotpay-config">
         <h3>{l s='Inforation' mod='dotpay'}</h3>
-        <a href="http://www.dotpay.pl" target="_blank" title="www.dotpay.pl"><img src="{$moduleMainDir|escape:'htmlall':'UTF-8'}views/img/dotpay_logo85.png" width="85px" height="50px" border="0" /></a>
+        <a href="http://www.dotpay.pl" target="_blank" title="www.dotpay.pl"><img src="{$moduleMainDir|escape:'htmlall':'UTF-8'}views/img/dotpay_logo85.png" width="85px" height="50px" border="0" /></a> |  <a href="http://www.przelewy24.pl/dotpay/" target="_blank" title="www.przelewy24.pl"><img src="{$moduleMainDir|escape:'htmlall':'UTF-8'}views/img/p24_logo.png" width="85px" height="50px" border="0" /></a>
+
+
         {if $confOK}
             <div class="bootstrap">
                 <div class="alert alert-success">

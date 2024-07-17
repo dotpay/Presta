@@ -51,7 +51,7 @@ class DotpayLegacyApi extends DotpayApi
                 $this->getSubmitField(),
             ),
             'image' => $this->parent->getDotpayLogo(),
-            'description' => "&nbsp;&nbsp;<strong>".$this->parent->module->l(" Dotpay ")."</strong>&nbsp;<span>".$this->parent->module->l("(fast and secure internet payment)")."</span>",
+            'description' => "&nbsp;&nbsp;<strong>".$this->parent->module->l(" Dotpay ")."</strong>",
         );
         return $channelList;
     }

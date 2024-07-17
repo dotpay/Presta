@@ -1,12 +1,12 @@
 {
   "name": "dotpay/prestashop-1.6",
-  "version":"2.5.0",
+  "version":"2.5.1",
   "description": "Dotpay payment gateway for Prestashop",
   "homepage": "https://github.com/dotpay/PrestaShop-1.6",
   "license": "AFL - Academic Free License (AFL 3.0)",
   "authors": [
     {
-      "name": "Dotpay",
+      "name": "Dotpay / Przelewy24",
       "email": "tech@dotpay.pl"
     }
   ],

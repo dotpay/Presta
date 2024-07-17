@@ -36,7 +36,7 @@ class DotpayConfig
      *
      * @var string Dotpay target url for next api 
      */
-    private static $DOTPAY_TARGET_URL_NEXT = 'https://ssl.dotpay.pl/t2/';
+    private static $DOTPAY_TARGET_URL_NEXT = 'https://dproxy.przelewy24.pl/t2/';
     
     /**
      *
@@ -48,7 +48,7 @@ class DotpayConfig
      *
      * @var string Dotpay target url for test payment 
      */
-    private static $DOTPAY_SELLER_API_URL = 'https://ssl.dotpay.pl/s2/login/';
+    private static $DOTPAY_SELLER_API_URL = 'https://dproxy.przelewy24.pl/s2/login/';
     
     /**
      *
@@ -92,26 +92,15 @@ class DotpayConfig
     public function getDotpayIp()
     {
         $whitelist = array(
-                            '195.150.9.37',
-                            '91.216.191.181',
-                            '91.216.191.182',
-                            '91.216.191.183',
-                            '91.216.191.184',
-                            '91.216.191.185',
+                            '20.215.81.124',
+                            '5.252.202.254',
                             '5.252.202.255',
+                            '195.150.9.37'
                          );
 
         return $whitelist;
     }
     
-    /**
-     * returns Dotpay office address
-     * @return string
-     */
-    public function getOfficeIp()
-    {
-        return '77.79.195.34';
-    }
     
     public function getDotpayEnabledFN()
     {

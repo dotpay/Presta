@@ -78,24 +78,28 @@ class DotpayCardBrand extends ObjectModel
      * Prepares an object, if it's in a database
      * @param string $name
      */
-    public function __construct($name)
+    public function __construct($name = null)
     {
-        $brand = Db::getInstance()->ExecuteS(
-           'SELECT *  
-            FROM `'._DB_PREFIX_.self::$definition['table'].'` 
-            WHERE name = \''.$name.'\''
-        );
-        if (count($brand)) {
-            $this->name = $brand[0]['name'];
-            $this->image = $brand[0]['image'];
+        if ($name) {
+            $brand = Db::getInstance()->ExecuteS(
+               'SELECT *  
+                FROM `'._DB_PREFIX_.self::$definition['table'].'` 
+                WHERE name = \''.$name.'\''
+            );
+            if (count($brand)) {
+                $this->name = $brand[0]['name'];
+                $this->image = $brand[0]['image'];
+            }
         }
     }
     
     /**
-     * Saves a values to database
-     * @return type
+     * Saves values to the database
+     * @param bool $null_values
+     * @param bool $auto_date
+     * @return bool
      */
-    public function save()
+    public function save($null_values = false, $auto_date = true)
     {
         return Db::getInstance()->execute(
             'INSERT INTO `'._DB_PREFIX_.self::$definition['table'].'`

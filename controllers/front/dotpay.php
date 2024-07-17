@@ -875,7 +875,7 @@ abstract class DotpayController extends ModuleFrontController
      */
     public function getDotpayLogo()
     {
-        return $this->module->getPath().'views/img/dotpay.png';
+        return $this->module->getPath().'views/img/p24_logo_small.png';
     }
 
     /**

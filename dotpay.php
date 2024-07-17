@@ -76,7 +76,7 @@ class dotpay extends PaymentModule
     {
         $this->name = 'dotpay';
         $this->tab = 'payments_gateways';
-        $this->version = '2.5.0';
+        $this->version = '2.5.1';
         $this->author = 'tech@dotpay.pl';
         $this->ps_versions_compliancy = array('min' => '1.6', 'max' => '1.6.9');
         $this->bootstrap = true;
@@ -87,7 +87,7 @@ class dotpay extends PaymentModule
         $this->module_key = '4a4585752c0aceb57586b3f669cf9421';
         parent::__construct();
 
-        $this->displayName = $this->l('Dotpay');
+        $this->displayName = $this->l('Dotpay/Przelewy24');
         if (_PS_VERSION_ < 1.6) {
             $this->description = $this->l('WARNING! This Dotpay payment module is designed only for the PrestaShop 1.6 and later. For older version PrestaShop use an older version of the Dotpay payment module  available to download from the following address: https://github.com/dotpay/PrestaShop-1.6/tags');
             parent::uninstall();
@@ -326,7 +326,8 @@ class dotpay extends PaymentModule
         }
 
         $payment_options = array(
-                'cta_text' => $this->l('Fast and secure internet payments'),
+                //'cta_text' => $this->l('Fast and secure internet payments'),
+                'cta_text' => '',
                 'logo' => $this->_path.'views/img/dotpay_logo85.png',
                 'action' => $this->context->link->getModuleLink($this->name, 'payment', array(), true)
         );
@@ -506,10 +507,6 @@ class dotpay extends PaymentModule
             array(
               'id_option2' => 'next',
               'name2' => $this->l('next (ID has 6 digits)')
-            ),
-            array(
-              'id_option2' => 'legacy',
-              'name2' => $this->l('legacy (ID has max 5 digits)')
             )
         );
         return array(
@@ -581,7 +578,7 @@ class dotpay extends PaymentModule
                         'name' => $this->config->getDotpayTestModeFN(),
                         'is_bool' => true,
                         'class' => 'next-option',
-                        'desc' => $this->l('I\'m using Dotpay test account (test ID)').'<br><b>'.$this->l('Required Dotpay test account:').' <a href="https://ssl.dotpay.pl/test_seller/test/registration/?affilate_id=prestashop_module" target="_blank" title="'.$this->l('Dotpay test account registration').'">'.$this->l('registration').'</b></a>',
+                        'desc' => $this->l('I\'m using Dotpay test account (test ID)').'<br><b>'.$this->l('Required Dotpay test account:'),
                         'values' => array(
                             array(
                                 'id' => 'active_on',
